@@ -1,0 +1,7 @@
+{
+  "totvsLanguageServer.welcomePage": false,
+  "totvsLanguageServer.editor.linter.includes": "C:\\mp1212210\\dev\\include",
+  "appService.zipIgnorePattern": ["node_modules{,/**}", ".vscode{,/**}"],
+  "appService.defaultWebAppToDeploy": "/subscriptions/4d4c46ed-ddde-4fac-aab0-4ffe956de7fc/resourceGroups/resolbit_group/providers/Microsoft.Web/sites/resolbit",
+  "appService.deploySubpath": "."
+}
