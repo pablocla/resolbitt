@@ -1,36 +1,33 @@
-// src/components/Navbar.tsx
-import React from "react";
-import Link from "next/link";
-import Image from "next/image";
-
-const Navbar: React.FC = () => {
+const Navbar = () => {
   return (
-    <nav className="navbar">
-      <div className="logo">
-        <Image src="/logo.png" alt="ResolbIT Logo" width={150} height={50} />
+    <nav className="navbar bg-gray-800 text-white p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <a href="/">
+          <img src="/logo.png" alt="ResolbIT" className="logo" />
+        </a>
+        <ul className="nav-links flex">
+          <li>
+            <a href="/" className="px-4 py-2 hover:bg-gray-700 rounded">
+              Cotizar Software Personalizado
+            </a>
+          </li>
+          <li>
+            <a href="/" className="px-4 py-2 hover:bg-gray-700 rounded">
+              E-commerce
+            </a>
+          </li>
+          <li>
+            <a href="/" className="px-4 py-2 hover:bg-gray-700 rounded">
+              Cloud Services
+            </a>
+          </li>
+          <li>
+            <a href="/" className="px-4 py-2 hover:bg-gray-700 rounded">
+              Blockchain
+            </a>
+          </li>
+        </ul>
       </div>
-      <ul className="nav-links">
-        <li>
-          <Link href="/quote" legacyBehavior>
-            <a>Cotizar Software Personalizado</a>
-          </Link>
-        </li>
-        <li>
-          <Link href="/ecommerce" legacyBehavior>
-            <a>E-commerce</a>
-          </Link>
-        </li>
-        <li>
-          <Link href="/cloud-services" legacyBehavior>
-            <a>Cloud Services</a>
-          </Link>
-        </li>
-        <li>
-          <Link href="/blockchain" legacyBehavior>
-            <a>Blockchain</a>
-          </Link>
-        </li>
-      </ul>
     </nav>
   );
 };
