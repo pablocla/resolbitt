@@ -1,8 +1,12 @@
-// components/Layout.tsx
-import React from "react";
+// src/components/Layout.tsx
+import React, { ReactNode } from "react";
 import Link from "next/link";
 
-const Layout: React.FC = ({ children }) => {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="w-full bg-white shadow">
