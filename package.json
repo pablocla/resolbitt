@@ -11,7 +11,6 @@
   "dependencies": {
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest",
-    "some-other-dependency": "1.0.0"
+    "react-dom": "latest"
   }
 }
