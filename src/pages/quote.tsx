@@ -1,4 +1,3 @@
-import Layout from "../components/Layout";
 import styles from "../styles/Quote.module.css";
 import Head from "next/head";
 
