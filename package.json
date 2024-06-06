@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && next export",
     "start": "next start",
     "lint": "next lint"
   },
@@ -20,10 +20,5 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^2.2.19",
     "typescript": "5.4.5"
-  },
-  "main": "next.config.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  }
 }

@@ -1,6 +1,6 @@
 // tailwind.config.js
 module.exports = {
-  purge: ["./pages/**/*.js", "./components/**/*.js", "./layouts/**/*.js"],
+  purge: ["./pages/**/*.tsx", "./components/**/*.tsx", "./layouts/**/*.tsx"],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {},
