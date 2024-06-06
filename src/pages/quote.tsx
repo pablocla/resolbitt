@@ -9,7 +9,9 @@ const QuotePage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="max-w-7xl mx-auto py-12 px-6 sm:px-8 text-center">
-        <h2 className="text-4xl font-extrabold mb-4">Cotización</h2>
+        <h2 className={`text-4xl font-extrabold mb-4 ${styles.title}`}>
+          Cotización
+        </h2>
         <p className="text-lg mb-8">
           Completa el formulario para cotizar tu proyecto de software
           personalizado.
