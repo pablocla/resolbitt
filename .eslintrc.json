@@ -1,0 +1,41 @@
+{
+<<<<<<< HEAD
+  "extends": [
+    "next/core-web-vitals",
+=======
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "eslint:recommended",
+>>>>>>> c6b0048a98181adc749e9f6f43c3d51425441dd2
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+<<<<<<< HEAD
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "rules": {
+    // Puedes agregar reglas personalizadas aquí
+=======
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint"],
+  "rules": {
+    "react/react-in-jsx-scope": "off"
+>>>>>>> c6b0048a98181adc749e9f6f43c3d51425441dd2
+  }
+}
