@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 export default function SignUp() {
@@ -36,9 +36,11 @@ export default function SignUp() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-white">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded shadow-lg">
-        <h1 className="text-2xl font-bold text-center">Registrarse</h1>
+        <h1 className="text-2xl font-bold text-center text-black">
+          Registrarse
+        </h1>
         {error && <p className="text-red-500">{error}</p>}
         {success && <p className="text-green-500">{success}</p>}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

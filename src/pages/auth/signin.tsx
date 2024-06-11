@@ -24,9 +24,11 @@ export default function SignIn() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-white">
       <div className="w-full max-w-md p-8 space-y-8 bg-white rounded shadow-lg">
-        <h1 className="text-2xl font-bold text-center">Iniciar Sesión</h1>
+        <h1 className="text-2xl font-bold text-center text-black">
+          Iniciar Sesión
+        </h1>
         {error && <p className="text-red-500">{error}</p>}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
@@ -68,7 +70,7 @@ export default function SignIn() {
               type="submit"
               className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md group hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
-              Sign in
+              Sign In
             </button>
           </div>
         </form>

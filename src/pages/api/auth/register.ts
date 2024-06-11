@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/db";
 import bcrypt from "bcrypt";
+import { Prisma } from "@prisma/client";
 
 export default async function handler(
   req: NextApiRequest,
@@ -39,7 +40,7 @@ export default async function handler(
 
     return res.status(201).json({ message: "User created", user: newUser });
   } catch (error) {
-    if (error instanceof prisma.PrismaClientKnownRequestError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       // Manejar errores conocidos de Prisma
       return res
         .status(500)

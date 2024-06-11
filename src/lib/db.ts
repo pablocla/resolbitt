@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
+// Crear una función singleton para PrismaClient
 const prismaClientSingleton = () => {
   return new PrismaClient();
 };
@@ -11,6 +12,8 @@ declare global {
 
 const prisma = globalThis.prisma || prismaClientSingleton();
 
-if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
+if (process.env.NODE_ENV !== "production") {
+  globalThis.prisma = prisma;
+}
 
 export default prisma;
