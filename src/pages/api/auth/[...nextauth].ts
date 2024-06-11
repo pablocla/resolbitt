@@ -13,12 +13,21 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
+        if (!credentials?.password || !credentials?.username) {
+          return null;
+        }
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials?.username },
+          where: { email: credentials.username },
         });
 
-        if (user && bcrypt.compareSync(credentials?.password, user.password)) {
-          return user;
+        if (user && bcrypt.compareSync(credentials.password, user.password)) {
+          return {
+            id: String(user.id), // Convertir id a cadena
+            username: user.username,
+            email: user.email,
+            password: user.password,
+          };
         } else {
           return null;
         }
@@ -32,6 +41,5 @@ export default NextAuth({
     signOut: "/auth/signout",
     error: "/auth/error",
     verifyRequest: "/auth/verify-request",
-    newUser: null,
   },
 });

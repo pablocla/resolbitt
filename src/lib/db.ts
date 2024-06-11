@@ -5,14 +5,12 @@ const prismaClientSingleton = () => {
 };
 
 // Extender globalThis para incluir prisma
-interface CustomNodeJsGlobal extends NodeJS.Global {
-  prisma?: PrismaClient;
+declare global {
+  var prisma: PrismaClient | undefined;
 }
 
-declare const global: CustomNodeJsGlobal;
+const prisma = globalThis.prisma || prismaClientSingleton();
 
-const prisma = global.prisma || prismaClientSingleton();
-
-if (process.env.NODE_ENV !== "production") global.prisma = prisma;
+if (process.env.NODE_ENV !== "production") globalThis.prisma = prisma;
 
 export default prisma;
