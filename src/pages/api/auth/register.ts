@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/db";
 import bcrypt from "bcrypt";
-import { Prisma } from "@prisma/client"; // Importar el tipo Prisma
 
 export default async function handler(
   req: NextApiRequest,
@@ -39,15 +38,15 @@ export default async function handler(
     });
 
     return res.status(201).json({ message: "User created", user: newUser });
-  } catch (error) {
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      // Manejar errores conocidos de Prisma
-      return res
-        .status(500)
-        .json({ error: "Error de conexión con la base de datos" });
-    } else {
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      // Código de error de violación de unicidad en Prisma
+      return res.status(409).json({ error: "Email already taken" });
+    } else if (error instanceof Error) {
       // Manejar otros errores
       return res.status(500).json({ error: "Internal server error" });
+    } else {
+      return res.status(500).json({ error: "Unknown error" });
     }
   }
 }
