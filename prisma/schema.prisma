@@ -1,0 +1,15 @@
+datasource db {
+  provider = "postgresql" // o el proveedor de tu base de datos (mysql, sqlite, etc.)
+  url      = env("DATABASE_URL") // asegúrate de que esta variable de entorno esté definida en tu archivo .env
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  email    String @unique
+  password String
+}

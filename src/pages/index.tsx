@@ -15,10 +15,15 @@ const Home: React.FC = () => {
           Soluciones de software a medida para tu negocio. Desde e-commerce
           hasta servicios en la nube y blockchain.
         </p>
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex justify-center space-x-4">
           <Link href="/quote">
             <button className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300">
               Cotizar Software Personalizado
+            </button>
+          </Link>
+          <Link href="/facturador">
+            <button className="px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition duration-300">
+              Ir al Facturador
             </button>
           </Link>
         </div>

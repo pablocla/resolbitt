@@ -1,0 +1,22 @@
+/* src/styles/Navbar.module.css */
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+}
+
+.navLinks {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navLinks li {
+  margin: 0 10px;
+}
