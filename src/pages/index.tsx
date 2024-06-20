@@ -1,8 +1,10 @@
-import React from "react";
 import Head from "next/head";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 const Home: React.FC = () => {
+  const { data: session } = useSession();
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-white">
       <Head>

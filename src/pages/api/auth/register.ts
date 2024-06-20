@@ -2,6 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/db";
 import bcrypt from "bcrypt";
 
+interface PrismaError extends Error {
+  code?: string;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -38,11 +42,12 @@ export default async function handler(
     });
 
     return res.status(201).json({ message: "User created", user: newUser });
-  } catch (error: any) {
-    if (error.code === "P2002") {
+  } catch (error) {
+    const prismaError = error as PrismaError;
+    if (prismaError.code === "P2002") {
       // Código de error de violación de unicidad en Prisma
       return res.status(409).json({ error: "Email already taken" });
-    } else if (error instanceof Error) {
+    } else if (prismaError instanceof Error) {
       // Manejar otros errores
       return res.status(500).json({ error: "Internal server error" });
     } else {

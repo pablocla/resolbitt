@@ -1,21 +1,33 @@
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useAuth from "../lib/useAuth";
 
+interface ErrorState {
+  message: string;
+}
+
 const FacturadorPage = () => {
-  const { user, loading } = useAuth();
+  const { user, loading, error } = useAuth();
   const router = useRouter();
+  const [errorState, setErrorState] = useState<ErrorState | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push("/auth/signin");
     }
-  }, [loading, user, router]);
+    if (error) {
+      setErrorState({ message: error.message });
+    }
+  }, [loading, user, error, router]);
 
   if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (errorState) {
+    return <div>Error: {errorState.message}</div>;
   }
 
   return (

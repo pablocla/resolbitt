@@ -42,4 +42,12 @@ export default NextAuth({
     error: "/auth/error",
     verifyRequest: "/auth/verify-request",
   },
+  callbacks: {
+    async session({ session, user }) {
+      if (session.user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
 });

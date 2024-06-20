@@ -1,0 +1,23 @@
+/* Stock.module.css */
+.container {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.inputContainer input {
+  margin-right: 10px;
+}
+
+.button {
+  padding: 10px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
