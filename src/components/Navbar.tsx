@@ -29,7 +29,7 @@ const Navbar = () => {
               </Link>
             </li>
             <li>
-              <Link href="/auth/signup" legacyBehavior passHref>
+              <Link href="/auth/singup" legacyBehavior passHref>
                 <a className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md">
                   Registrarse
                 </a>
