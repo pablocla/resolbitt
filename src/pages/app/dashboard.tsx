@@ -32,7 +32,7 @@ const Dashboard = () => {
         <h1 className="text-3xl font-bold mb-6">Dashboard de Ventas</h1>
         {/* Esto es una version 100% de testing con fines a */}
         <div className="bg-white p-6 rounded shadow-md text-black">
-          <p>Esta app esta echa con fines educativos.</p>
+          <p>Esta app wdesta echa con fines educativos.</p>
         </div>
       </div>
     </div>
