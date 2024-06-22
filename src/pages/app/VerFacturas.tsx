@@ -1,0 +1,247 @@
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Invoice } from "@prisma/client";
+
+const VerFacturas = () => {
+  const [data, setData] = useState<Invoice[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedInvoices, setSelectedInvoices] = useState<number[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/api/facturacion");
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setError("Error fetching data");
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleTransmit = async () => {
+    try {
+      await Promise.all(
+        selectedInvoices.map((invoiceId) =>
+          axios.post("/api/afip", { invoiceId })
+        )
+      );
+      alert("Facturas transmitidas exitosamente a la AFIP");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          setError(error.response.data.error);
+        } else {
+          setError("Error de comunicación con el servidor");
+        }
+      } else {
+        setError("Error al transmitir las facturas");
+      }
+    }
+  };
+
+  const handleGeneratePdf = async () => {
+    try {
+      const response = await axios.post(
+        "/api/facturacion?action=generate-pdf",
+        {
+          invoiceId: selectedInvoices[0], // Assuming you want to generate PDF for the first selected invoice
+        }
+      );
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `invoice_${selectedInvoices[0]}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error generating invoice PDF:", error);
+      setError("Error generating invoice PDF");
+    }
+  };
+
+  const handleSelectInvoice = (id: number) => {
+    setSelectedInvoices((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((invoiceId) => invoiceId !== id)
+        : [...prevSelected, id]
+    );
+  };
+
+  const handleEdit = (id: number) => {
+    // Implementar lógica para editar factura
+  };
+
+  const handleView = (id: number) => {
+    // Implementar lógica para visualizar factura
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await axios.delete(`/api/facturacion/${id}`);
+      setData(
+        (prevData) => prevData?.filter((invoice) => invoice.id !== id) || null
+      );
+    } catch (error) {
+      console.error("Error deleting invoice:", error);
+      setError("Error deleting invoice");
+    }
+  };
+
+  return (
+    <div className="bg-white p-6 rounded shadow-md text-black w-full max-w-6xl mx-auto mt-6">
+      <h2 className="text-xl mb-4 text-center font-semibold">Facturas</h2>
+      {error && <div className="text-red-500">{error}</div>}
+      <div className="flex justify-end mb-4 space-x-4">
+        <button
+          onClick={handleTransmit}
+          className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
+          disabled={selectedInvoices.length === 0}
+        >
+          Transmitir a AFIP
+        </button>
+        <button
+          onClick={handleGeneratePdf}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
+          disabled={selectedInvoices.length === 0}
+        >
+          Generar PDF
+        </button>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200 table-auto">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <input
+                  type="checkbox"
+                  onChange={(e) =>
+                    setSelectedInvoices(
+                      e.target.checked
+                        ? data?.map((invoice) => invoice.id) || []
+                        : []
+                    )
+                  }
+                  checked={!!data && selectedInvoices.length === data.length}
+                />
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Cliente ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Producto ID
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Monto
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Tipo de Comprobante
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Punto de Venta
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Concepto
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Tipo de Documento
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Número de Documento
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Importe Neto
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Importe IVA
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Importe Total
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Acciones
+              </th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {data &&
+              data.map((invoice) => (
+                <tr key={invoice.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <input
+                      type="checkbox"
+                      checked={selectedInvoices.includes(invoice.id)}
+                      onChange={() => handleSelectInvoice(invoice.id)}
+                    />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{invoice.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {invoice.customerId ?? "Desconocido"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {invoice.productId ?? "Desconocido"}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    ${invoice.amount}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {invoice.cbteTipo}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {invoice.ptoVta}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {invoice.concepto}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {invoice.docTipo}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {invoice.docNro}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    ${invoice.impNeto}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    ${invoice.impIVA}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    ${invoice.impTotal}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap flex space-x-2">
+                    <button
+                      onClick={() => handleEdit(invoice.id)}
+                      className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-700"
+                    >
+                      Editar
+                    </button>
+                    <button
+                      onClick={() => handleView(invoice.id)}
+                      className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-700"
+                    >
+                      Ver
+                    </button>
+                    <button
+                      onClick={() => handleDelete(invoice.id)}
+                      className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700"
+                    >
+                      Borrar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default VerFacturas;
