@@ -54,8 +54,8 @@ const Dashboard = () => {
             {
               label: "Ventas",
               data,
-              borderColor: "rgba(75, 192, 192, 1)",
-              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              borderColor: "rgba(138, 43, 226, 1)", // Violeta
+              backgroundColor: "rgba(138, 43, 226, 0.2)", // Violeta con transparencia
             },
           ],
         });
@@ -75,8 +75,8 @@ const Dashboard = () => {
             {
               label: "Stock Bajo",
               data: stockData.map((item: StockItem) => item.quantity),
-              backgroundColor: "rgba(255, 99, 132, 0.2)",
-              borderColor: "rgba(255, 99, 132, 1)",
+              backgroundColor: "rgba(138, 43, 226, 0.2)", // Violeta con transparencia
+              borderColor: "rgba(138, 43, 226, 1)", // Violeta
               borderWidth: 1,
             },
           ],
@@ -113,6 +113,10 @@ const Dashboard = () => {
     router.push("/app/clientes");
   };
 
+  const handlePOSClick = () => {
+    router.push("/app/pos");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-white flex">
       <div className="w-1/4 p-4 bg-gray-800 flex flex-col items-start">
@@ -140,20 +144,26 @@ const Dashboard = () => {
         >
           Clientes
         </button>
+        <button
+          onClick={handlePOSClick}
+          className="px-4 py-2 mb-4 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300 w-full text-left"
+        >
+          Sistema POS
+        </button>
       </div>
       <div className="w-3/4 p-8">
         <h1 className="text-3xl font-bold mb-6">Dashboard de Ventas</h1>
-        <div className="flex space-x-4">
-          <div className="bg-white p-4 rounded shadow-md text-black flex-1">
+        <div className="flex space-x-4 flex-col md:flex-row">
+          <div className="bg-black p-4 rounded shadow-md text-white flex-1">
             <h2 className="text-xl mb-2">Ventas</h2>
             <div className="h-64">
-              <Line data={salesData} />
+              <Line data={salesData} options={{ responsive: true }} />
             </div>
           </div>
-          <div className="bg-white p-4 rounded shadow-md text-black flex-1">
+          <div className="bg-black p-4 rounded shadow-md text-white flex-1">
             <h2 className="text-xl mb-2">Stock Bajo</h2>
             <div className="h-64">
-              <Bar data={stockData} />
+              <Bar data={stockData} options={{ responsive: true }} />
             </div>
           </div>
         </div>

@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Invoice } from "@prisma/client";
+import { Invoice, Product } from "@prisma/client";
+
+interface InvoiceWithProducts extends Invoice {
+  products: {
+    product: Product;
+  }[];
+}
 
 const VerFacturas = () => {
-  const [data, setData] = useState<Invoice[] | null>(null);
+  const [data, setData] = useState<InvoiceWithProducts[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedInvoices, setSelectedInvoices] = useState<number[]>([]);
 
@@ -136,7 +142,7 @@ const VerFacturas = () => {
                 Cliente ID
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Producto ID
+                Productos
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Monto
@@ -186,7 +192,9 @@ const VerFacturas = () => {
                     {invoice.customerId ?? "Desconocido"}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {invoice.productId ?? "Desconocido"}
+                    {invoice.products
+                      .map((prod) => prod.product.name)
+                      .join(", ")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     ${invoice.amount}
