@@ -36,7 +36,7 @@ export default async function handler(
         }
 
         const pdfBytes = await generateInvoicePdf({
-          customer: invoice.customer,
+          customer: invoice.customer || { name: "Cliente desconocido" },
           products: invoice.products.map((ip) => ip.product),
           amount: invoice.amount,
           impIVA: invoice.impIVA,
@@ -102,13 +102,12 @@ export default async function handler(
                 product: {
                   connect: { id: productId },
                 },
-                quantity: 1, // Ajusta esto según tus necesidades
+                quantity: 1,
               })),
             },
           },
         });
 
-        // Enviar respuesta de éxito al POS
         return res.status(201).json(invoice);
       } catch (error) {
         console.error("Error creating invoice:", error);

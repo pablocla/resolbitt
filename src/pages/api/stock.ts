@@ -1,3 +1,4 @@
+// src/pages/api/stock.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 
@@ -16,38 +17,37 @@ export default async function handler(
       });
       res.status(200).json(stocks);
     } catch (error) {
-      res.status(500).json({ error: "Error fetching stocks" });
+      console.error("Error fetching stock:", error);
+      res.status(500).json({ error: "Error fetching stock" });
     }
   } else if (req.method === "POST") {
-    const { name, description, price, userId, quantity } = req.body;
+    const { productId, quantity } = req.body;
+
     try {
-      const newProduct = await prisma.product.create({
+      const newStock = await prisma.stock.create({
         data: {
-          name,
-          description,
-          price,
-          userId,
-          stocks: {
-            create: {
-              quantity,
-            },
-          },
+          productId,
+          quantity,
         },
       });
-      res.status(201).json(newProduct);
+      res.status(201).json(newStock);
     } catch (error) {
-      res.status(500).json({ error: "Error creating product" });
+      console.error("Error creating stock:", error);
+      res.status(500).json({ error: "Error creating stock" });
     }
   } else if (req.method === "PATCH") {
     const { id, adjustment } = req.body;
+
     try {
       const stock = await prisma.stock.update({
         where: { id },
         data: { quantity: { increment: adjustment } },
+        include: { product: true },
       });
       res.status(200).json(stock);
     } catch (error) {
-      res.status(500).json({ error: "Error adjusting stock quantity" });
+      console.error("Error adjusting stock:", error);
+      res.status(500).json({ error: "Error adjusting stock" });
     }
   } else {
     res.setHeader("Allow", ["GET", "POST", "PATCH"]);

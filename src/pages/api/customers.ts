@@ -49,8 +49,31 @@ export default async function handler(
       console.error("Error creating customer:", error);
       res.status(500).json({ error: "Error creating customer" });
     }
+  } else if (req.method === "PUT") {
+    const { id, name, email, phone, cuit } = req.body;
+
+    if (!id || !name || !cuit) {
+      res.status(400).json({ error: "ID, Name and CUIT are required" });
+      return;
+    }
+
+    try {
+      const updatedCustomer = await prisma.customer.update({
+        where: { id },
+        data: {
+          name,
+          email,
+          phone,
+          cuit,
+        },
+      });
+      res.status(200).json(updatedCustomer);
+    } catch (error) {
+      console.error("Error updating customer:", error);
+      res.status(500).json({ error: "Error updating customer" });
+    }
   } else {
-    res.setHeader("Allow", ["GET", "POST"]);
+    res.setHeader("Allow", ["GET", "POST", "PUT"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }

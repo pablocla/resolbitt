@@ -1,13 +1,19 @@
 import "../styles/globals.css";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
-import Navbar from "../components/Navbar";
+import Layout from "../components/Layout";
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const handleQuickAction = (action: string) => {
+    console.log(`Quick action triggered: ${action}`);
+    // Implementa las acciones rápidas aquí
+  };
+
   return (
     <SessionProvider session={pageProps.session}>
-      <Navbar />
-      <Component {...pageProps} />
+      <Layout onQuickAction={handleQuickAction}>
+        <Component {...pageProps} />
+      </Layout>
     </SessionProvider>
   );
 }

@@ -8,6 +8,7 @@ const productSchema = yup.object().shape({
   name: yup.string().required(),
   price: yup.number().required().positive(),
   userId: yup.number().required().positive(),
+  quantity: yup.number().required().positive().integer(), // Añadido campo de cantidad
 });
 
 export default async function handler(
@@ -27,11 +28,13 @@ export default async function handler(
             },
             include: {
               user: true,
+              stocks: true, // Incluir la relación de stock
             },
           })
         : await prisma.product.findMany({
             include: {
               user: true,
+              stocks: true, // Incluir la relación de stock
             },
           });
       res.status(200).json(products);
@@ -40,10 +43,10 @@ export default async function handler(
       res.status(500).json({ error: "Error fetching products" });
     }
   } else if (req.method === "POST") {
-    const { name, price, userId } = req.body;
+    const { name, price, userId, quantity } = req.body;
 
     try {
-      await productSchema.validate({ name, price, userId });
+      await productSchema.validate({ name, price, userId, quantity });
     } catch (validationError) {
       console.error("Validation Error:", validationError);
       return res.status(400).json({ error: "Invalid input data" });
@@ -55,6 +58,9 @@ export default async function handler(
           name,
           price,
           userId,
+          stocks: {
+            create: { quantity }, // Crear el stock inicial
+          },
         },
       });
       res.status(201).json(newProduct);
@@ -63,18 +69,36 @@ export default async function handler(
       res.status(500).json({ error: "Error creating product" });
     }
   } else if (req.method === "PUT") {
-    const { id, name, price } = req.body;
+    const { id, name, price, quantity } = req.body;
 
     try {
-      await productSchema.validate({ name, price, userId: 1 });
+      await productSchema.validate({ name, price, userId: 1, quantity });
     } catch (validationError) {
       return res.status(400).json({ error: "Invalid input data" });
     }
 
     try {
+      // Primero, obtén el stock relacionado con el producto
+      const stock = await prisma.stock.findFirst({
+        where: { productId: id },
+      });
+
+      if (!stock) {
+        return res.status(404).json({ error: "Stock not found" });
+      }
+
       const updatedProduct = await prisma.product.update({
         where: { id },
-        data: { name, price },
+        data: {
+          name,
+          price,
+          stocks: {
+            update: {
+              where: { id: stock.id },
+              data: { quantity },
+            },
+          },
+        },
       });
       res.status(200).json(updatedProduct);
     } catch (error) {

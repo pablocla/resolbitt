@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Line, Bar } from "react-chartjs-2";
+import { Line, Radar } from "react-chartjs-2";
 import axios from "axios";
 import {
   Chart as ChartJS,
@@ -8,19 +8,27 @@ import {
   LinearScale,
   PointElement,
   LineElement,
-  BarElement,
+  RadialLinearScale,
   Title,
   Tooltip,
   Legend,
   ChartData,
 } from "chart.js";
+import {
+  FaUserPlus,
+  FaSearch,
+  FaPlusCircle,
+  FaFileInvoice,
+} from "react-icons/fa";
+import AddClientModal from "../../components/AddClientModal";
+import Sidebar from "../../components/Sidebar";
 
 ChartJS.register(
   CategoryScale,
   LinearScale,
   PointElement,
   LineElement,
-  BarElement,
+  RadialLinearScale,
   Title,
   Tooltip,
   Legend
@@ -37,10 +45,14 @@ const Dashboard = () => {
     labels: [],
     datasets: [],
   });
-  const [stockData, setStockData] = useState<ChartData<"bar">>({
+  const [bestSellingProducts, setBestSellingProducts] = useState<
+    ChartData<"radar">
+  >({
     labels: [],
     datasets: [],
   });
+  const [error, setError] = useState<string | null>(null);
+  const [showAddClientModal, setShowAddClientModal] = useState(false);
 
   useEffect(() => {
     const fetchSalesData = async () => {
@@ -54,121 +66,199 @@ const Dashboard = () => {
             {
               label: "Ventas",
               data,
-              borderColor: "rgba(138, 43, 226, 1)", // Violeta
-              backgroundColor: "rgba(138, 43, 226, 0.2)", // Violeta con transparencia
+              borderColor: "rgba(75, 192, 192, 1)",
+              backgroundColor: "rgba(75, 192, 192, 0.2)",
+              tension: 0.4,
+              borderWidth: 2,
+              pointBackgroundColor: "rgba(75, 192, 192, 1)",
             },
           ],
         });
       } catch (error) {
         console.error("Error fetching sales data:", error);
+        setError("Error fetching sales data");
       }
     };
 
-    const fetchStockData = async () => {
+    const fetchBestSellingProducts = async () => {
       try {
-        const response = await axios.get("/api/stock");
-        const stockData: StockItem[] = response.data;
+        const response = await axios.get("/api/bestSellingProducts");
+        const productData = response.data;
 
-        setStockData({
-          labels: stockData.map((item: StockItem) => item.name),
+        setBestSellingProducts({
+          labels: productData.map((product: { name: string }) => product.name),
           datasets: [
             {
-              label: "Stock Bajo",
-              data: stockData.map((item: StockItem) => item.quantity),
-              backgroundColor: "rgba(138, 43, 226, 0.2)", // Violeta con transparencia
-              borderColor: "rgba(138, 43, 226, 1)", // Violeta
-              borderWidth: 1,
+              label: "Productos Más Vendidos",
+              data: productData.map(
+                (product: { count: number }) => product.count
+              ),
+              backgroundColor: "rgba(255, 205, 86, 0.2)", // Color de fondo amarillo
+              borderColor: "rgba(255, 205, 86, 1)", // Color de borde amarillo
+              borderWidth: 2,
+              pointBackgroundColor: "rgba(255, 205, 86, 1)", // Color del punto amarillo
             },
           ],
         });
       } catch (error) {
-        console.error("Error fetching stock data:", error);
+        console.error("Error fetching best selling products data:", error);
+        setError("Error fetching best selling products data");
       }
     };
 
     fetchSalesData();
-    fetchStockData();
+    fetchBestSellingProducts();
 
     const interval = setInterval(() => {
       fetchSalesData();
-      fetchStockData();
+      fetchBestSellingProducts();
     }, 86400000); // Actualiza una vez al día (24 horas)
 
     return () => clearInterval(interval);
   }, []);
 
-  const handleStockClick = () => {
-    router.push("/app/stock");
-  };
-
-  const handleFacturacionClick = () => {
-    router.push("/app/facturacion");
-  };
-
-  const handleProductosClick = () => {
-    router.push("/app/productos");
-  };
-
-  const handleClientesClick = () => {
-    router.push("/app/clientes");
-  };
-
-  const handlePOSClick = () => {
-    router.push("/app/pos");
+  const handleQuickAction = (action: string) => {
+    switch (action) {
+      case "addClient":
+        setShowAddClientModal(true);
+        break;
+      case "searchPrice":
+        console.log("Buscar Precio");
+        break;
+      case "createProduct":
+        console.log("Crear Producto");
+        break;
+      case "createInvoice":
+        console.log("Crear Factura");
+        break;
+      default:
+        break;
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-white flex">
-      <div className="w-1/4 p-4 bg-gray-800 flex flex-col items-start">
-        <button
-          onClick={handleStockClick}
-          className="px-4 py-2 mb-4 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300 w-full text-left"
-        >
-          Stock
-        </button>
-        <button
-          onClick={handleFacturacionClick}
-          className="px-4 py-2 mb-4 bg-green-500 text-white rounded hover:bg-green-600 transition duration-300 w-full text-left"
-        >
-          Facturación
-        </button>
-        <button
-          onClick={handleProductosClick}
-          className="px-4 py-2 mb-4 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition duration-300 w-full text-left"
-        >
-          Productos
-        </button>
-        <button
-          onClick={handleClientesClick}
-          className="px-4 py-2 mb-4 bg-purple-500 text-white rounded hover:bg-purple-600 transition duration-300 w-full text-left"
-        >
-          Clientes
-        </button>
-        <button
-          onClick={handlePOSClick}
-          className="px-4 py-2 mb-4 bg-red-500 text-white rounded hover:bg-red-600 transition duration-300 w-full text-left"
-        >
-          Sistema POS
-        </button>
-      </div>
-      <div className="w-3/4 p-8">
-        <h1 className="text-3xl font-bold mb-6">Dashboard de Ventas</h1>
-        <div className="flex space-x-4 flex-col md:flex-row">
-          <div className="bg-black p-4 rounded shadow-md text-white flex-1">
-            <h2 className="text-xl mb-2">Ventas</h2>
-            <div className="h-64">
-              <Line data={salesData} options={{ responsive: true }} />
+    <>
+      <div className="min-h-screen flex bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-white">
+        <Sidebar />
+        <div className="flex-1">
+          <div className="p-4">
+            <h1 className="text-3xl font-bold mb-4">Dashboard de Ventas</h1>
+            {/* Subbarra de navegación */}
+            <div className="bg-gray-800 text-black p-4 shadow-md mb-4 flex justify-around">
+              <button
+                onClick={() => handleQuickAction("addClient")}
+                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
+                title="Agregar Cliente"
+              >
+                <FaUserPlus className="mr-2" />
+              </button>
+              <button
+                onClick={() => handleQuickAction("searchPrice")}
+                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
+                title="Buscar Precio"
+              >
+                <FaSearch className="mr-2" />
+              </button>
+              <button
+                onClick={() => handleQuickAction("createProduct")}
+                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
+                title="Crear Producto"
+              >
+                <FaPlusCircle className="mr-2" />
+              </button>
+              <button
+                onClick={() => handleQuickAction("createInvoice")}
+                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
+                title="Crear Factura"
+              >
+                <FaFileInvoice className="mr-2" />
+              </button>
+            </div>
+
+            <div className="flex space-x-4 flex-col md:flex-row">
+              <div className="bg-black p-4 rounded shadow-md text-black flex-1">
+                <h2 className="text-xl mb-2">Ventas</h2>
+                <div className="h-64">
+                  <Line
+                    data={salesData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                        x: {
+                          grid: {
+                            color: "rgba(255, 255, 255, 0.1)",
+                          },
+                        },
+                        y: {
+                          grid: {
+                            color: "rgba(255, 255, 255, 0.1)",
+                          },
+                        },
+                      },
+                      plugins: {
+                        legend: {
+                          labels: {
+                            color: "white",
+                          },
+                        },
+                        tooltip: {
+                          enabled: true,
+                          backgroundColor: "rgba(0, 0, 0, 0.7)",
+                          titleColor: "white",
+                          bodyColor: "white",
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="bg-black p-4 rounded shadow-md text-black flex-1">
+                <h2 className="text-xl mb-2">Productos Más Vendidos</h2>
+                <div className="h-64">
+                  <Radar
+                    data={bestSellingProducts}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                        r: {
+                          grid: {
+                            color: "rgba(255, 255, 255, 0.1)",
+                          },
+                          pointLabels: {
+                            color: "white",
+                          },
+                          angleLines: {
+                            color: "rgba(255, 255, 255, 0.1)",
+                          },
+                        },
+                      },
+                      plugins: {
+                        legend: {
+                          labels: {
+                            color: "white",
+                          },
+                        },
+                        tooltip: {
+                          enabled: true,
+                          backgroundColor: "rgba(0, 0, 0, 0.7)",
+                          titleColor: "white",
+                          bodyColor: "white",
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
-          <div className="bg-black p-4 rounded shadow-md text-white flex-1">
-            <h2 className="text-xl mb-2">Stock Bajo</h2>
-            <div className="h-64">
-              <Bar data={stockData} options={{ responsive: true }} />
-            </div>
-          </div>
+          {showAddClientModal && (
+            <AddClientModal onClose={() => setShowAddClientModal(false)} />
+          )}
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

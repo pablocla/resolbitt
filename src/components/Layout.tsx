@@ -3,13 +3,15 @@ import Navbar from "./Navbar"; // Importa el componente Navbar
 
 interface LayoutProps {
   children: ReactNode;
+  onQuickAction: (action: string) => void;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC<LayoutProps> = ({ children, onQuickAction }) => {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="w-full bg-gray-800 shadow">
-        <Navbar /> {/* Incluye el componente Navbar */}
+        <Navbar onQuickAction={onQuickAction} />{" "}
+        {/* Incluye el componente Navbar con la prop onQuickAction */}
       </header>
       <main className="flex-1">{children}</main>
       <footer className="w-full bg-gray-800 shadow mt-8 py-4">

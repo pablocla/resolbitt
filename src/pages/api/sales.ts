@@ -13,18 +13,20 @@ const getSalesData = async (req: NextApiRequest, res: NextApiResponse) => {
       },
     });
 
-    // Grouping and summing the amounts by month
+    // Grouping and summing the amounts by day
     const salesData = invoices.reduce(
       (acc, invoice) => {
-        const month = new Date(invoice.createdAt).toLocaleString("default", {
-          month: "long",
+        const day = new Date(invoice.createdAt).toLocaleDateString("default", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
         });
-        if (!acc.labels.includes(month)) {
-          acc.labels.push(month);
+        if (!acc.labels.includes(day)) {
+          acc.labels.push(day);
           acc.data.push(0);
         }
-        const monthIndex = acc.labels.indexOf(month);
-        acc.data[monthIndex] += invoice.amount;
+        const dayIndex = acc.labels.indexOf(day);
+        acc.data[dayIndex] += invoice.amount;
         return acc;
       },
       { labels: [], data: [] } as { labels: string[]; data: number[] }
