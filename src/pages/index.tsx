@@ -15,7 +15,7 @@ const Home: React.FC = () => {
         <h1 className="text-4xl font-bold mb-4">Bienvenido a ResolbIT</h1>
         <p className="mt-4 text-xl">
           Soluciones de software a medida para tu negocio. Desde e-commerce
-          hasta servicios en la nube y blockchain.
+          hasta servicios en la nube y blockchain .
         </p>
         <div className="mt-8 flex justify-center space-x-4">
           <Link href="/quote">
