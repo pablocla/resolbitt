@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import React, { useEffect, useState } from "react";
-import Sidebar from "../../components/Sidebar"; // Asegúrate de importar el Sidebar correctamente
+import Sidebar from "../../components/sidebar"; // Asegúrate de importar el Sidebar correctamente
 
 interface StockItem {
   id: number;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Sidebar from "../../components/Sidebar"; // Asegúrate de importar el Sidebar correctamente
+import Sidebar from "../../components/sidebar"; // Asegúrate de importar el Sidebar correctamente
 
 interface Cliente {
   id: number;

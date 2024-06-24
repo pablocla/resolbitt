@@ -21,7 +21,7 @@ import {
   FaFileInvoice,
 } from "react-icons/fa";
 import AddClientModal from "../../components/AddClientModal";
-import Sidebar from "../../components/Sidebar";
+import Sidebar from "../../components/sidebar";
 
 ChartJS.register(
   CategoryScale,

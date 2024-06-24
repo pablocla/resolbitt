@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import Sidebar from "./Sidebar"; // Asegúrate de que la ruta y el nombre del archivo sean correctos
+import Sidebar from "./sidebar"; // Asegúrate de que la ruta y el nombre del archivo sean correctos
 
 interface DashboardLayoutProps {
   children: ReactNode;

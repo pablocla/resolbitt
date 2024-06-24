@@ -3,7 +3,7 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import { Invoice } from "../../types"; // Importar la interfaz Invoice desde el archivo types
 import CrearFactura from "./CrearFactura";
-import Sidebar from "../../components/Sidebar"; // Importar el Sidebar
+import Sidebar from "../../components/sidebar"; // Importar el Sidebar
 
 interface VerFacturasProps {
   onInvoiceCreated: (newInvoice: Invoice) => void;

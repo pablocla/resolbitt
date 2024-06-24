@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import VerFacturas from "./VerFacturas";
 import { Invoice } from "../../types"; // Asegúrate de usar la interfaz correcta
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/sidebar";
 
 const Facturacion = () => {
   const [invoices, setInvoices] = useState<Invoice[] | null>(null);
