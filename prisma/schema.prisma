@@ -15,9 +15,11 @@ model User {
   products    Product[]
   invoices    Invoice[]
   role        Role         @default(USER)
+  blocked     Boolean      @default(false) // Añadido el campo blocked
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
+
 
 model Product {
   id          Int          @id @default(autoincrement())
@@ -29,7 +31,7 @@ model Product {
   invoices    InvoiceProduct[]
   stocks      Stock[]
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Invoice {
@@ -52,7 +54,7 @@ model Invoice {
   impIVA          Float?        // Importe del IVA
   impTotal        Float?        // Importe total
   createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
 
 model InvoiceProduct {
@@ -70,7 +72,7 @@ model Stock {
   quantity    Int
   product     Product      @relation(fields: [productId], references: [id])
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model Customer {
@@ -81,7 +83,7 @@ model Customer {
   cuit        String
   invoices    Invoice[]
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model AfipStatus {

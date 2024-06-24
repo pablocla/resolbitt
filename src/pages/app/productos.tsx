@@ -23,6 +23,7 @@ const Products = () => {
   const [error, setError] = useState<ErrorState | null>(null);
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
+  const [quantity, setQuantity] = useState(1); // Inicializar quantity en 1
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
@@ -58,6 +59,7 @@ const Products = () => {
           name,
           price,
           userId: 1, // Assuming userId is 1 for demonstration purposes
+          quantity, // Agregar cantidad a la solicitud
         });
         setProducts([...products, response.data]);
         resetForm();
@@ -78,6 +80,7 @@ const Products = () => {
         id: editingProduct.id,
         name,
         price,
+        quantity, // Agregar cantidad a la solicitud de actualización
       });
       setProducts(
         products.map((product) =>
@@ -98,6 +101,11 @@ const Products = () => {
     setEditingProduct(product);
     setName(product.name);
     setPrice(product.price);
+    const totalQuantity = product.stocks.reduce(
+      (total, stock) => total + stock.quantity,
+      0
+    );
+    setQuantity(totalQuantity); // Establecer cantidad en el formulario de edición
   };
 
   const handleDelete = async (id: number) => {
@@ -121,7 +129,7 @@ const Products = () => {
   };
 
   const isValidInput = () => {
-    if (name.trim() === "" || price <= 0) {
+    if (name.trim() === "" || price <= 0 || quantity <= 0) {
       setError({
         message: "Invalid input: All fields must be filled with valid values",
       });
@@ -133,6 +141,7 @@ const Products = () => {
   const resetForm = () => {
     setName("");
     setPrice(0);
+    setQuantity(1); // Reiniciar cantidad a 1
     setEditingProduct(null);
   };
 
@@ -171,6 +180,18 @@ const Products = () => {
                     onChange={(e) => setPrice(parseFloat(e.target.value))}
                     required
                     className="px-4 py-2 border border-gray-300 rounded w-full"
+                  />
+                </label>
+                <label className="block">
+                  <span className="text-gray-700">Cantidad</span>
+                  <input
+                    type="number"
+                    placeholder="Cantidad"
+                    value={quantity}
+                    onChange={(e) => setQuantity(parseInt(e.target.value, 10))}
+                    required
+                    className="px-4 py-2 border border-gray-300 rounded w-full"
+                    min={1} // Asegurarse de que el valor mínimo sea 1
                   />
                 </label>
                 <button

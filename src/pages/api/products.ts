@@ -8,7 +8,7 @@ const productSchema = yup.object().shape({
   name: yup.string().required(),
   price: yup.number().required().positive(),
   userId: yup.number().required().positive(),
-  quantity: yup.number().required().positive().integer(), // Añadido campo de cantidad
+  quantity: yup.number().required().positive().integer().min(1), // quantity debe ser mayor a 0
 });
 
 export default async function handler(
@@ -48,8 +48,11 @@ export default async function handler(
     try {
       await productSchema.validate({ name, price, userId, quantity });
     } catch (validationError) {
-      console.error("Validation Error:", validationError);
-      return res.status(400).json({ error: "Invalid input data" });
+      if (validationError instanceof yup.ValidationError) {
+        console.error("Validation Error:", validationError);
+        return res.status(400).json({ error: validationError.errors[0] });
+      }
+      return res.status(400).json({ error: "Unknown validation error" });
     }
 
     try {
@@ -74,7 +77,10 @@ export default async function handler(
     try {
       await productSchema.validate({ name, price, userId: 1, quantity });
     } catch (validationError) {
-      return res.status(400).json({ error: "Invalid input data" });
+      if (validationError instanceof yup.ValidationError) {
+        return res.status(400).json({ error: validationError.errors[0] });
+      }
+      return res.status(400).json({ error: "Unknown validation error" });
     }
 
     try {

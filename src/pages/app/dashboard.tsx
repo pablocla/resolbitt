@@ -19,6 +19,7 @@ import {
   FaSearch,
   FaPlusCircle,
   FaFileInvoice,
+  FaUsers,
 } from "react-icons/fa";
 import AddClientModal from "../../components/AddClientModal";
 import Sidebar from "../../components/sidebar";
@@ -131,6 +132,9 @@ const Dashboard = () => {
       case "createInvoice":
         console.log("Crear Factura");
         break;
+      case "manageUsers":
+        router.push("/users"); // Navegar a la página de usuarios
+        break;
       default:
         break;
     }
@@ -172,6 +176,13 @@ const Dashboard = () => {
                 title="Crear Factura"
               >
                 <FaFileInvoice className="mr-2" />
+              </button>
+              <button
+                onClick={() => handleQuickAction("manageUsers")}
+                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
+                title="Gestionar Usuarios"
+              >
+                <FaUsers className="mr-2" />
               </button>
             </div>
 

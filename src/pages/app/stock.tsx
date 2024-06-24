@@ -102,7 +102,7 @@ const Stock = () => {
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <div className="flex-1 bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-white p-8">
+      <div className="flex-1 bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-black p-8">
         {loading ? (
           <img
             src="/logo.png"
@@ -165,13 +165,13 @@ const Stock = () => {
                     <td className="border px-4 py-2 flex space-x-2">
                       <button
                         onClick={() => handleAdjustment(item.id, 1)}
-                        className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-700"
+                        className="px-2 py-1 bg-green-500 text-black rounded hover:bg-green-700"
                       >
                         +
                       </button>
                       <button
                         onClick={() => handleAdjustment(item.id, -1)}
-                        className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-700"
+                        className="px-2 py-1 bg-red-500 text-black rounded hover:bg-red-700"
                       >
                         -
                       </button>
