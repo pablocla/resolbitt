@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Product, Customer } from "@prisma/client";
+import { Invoice } from "../../types";
 
 interface CrearFacturaProps {
-  onInvoiceCreated: (invoice: any) => void;
+  onInvoiceCreated: (invoice: Invoice) => void;
   onClose: () => void;
 }
 
@@ -83,7 +84,7 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
         return;
       }
 
-      const response = await axios.post("/api/facturacion", {
+      const response = await axios.post<Invoice>("/api/facturacion", {
         amount,
         productIds: productIds.map((item) => item.id),
         customerId,
@@ -98,18 +99,15 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
         impTotal: amount + impIVA,
       });
 
-      onInvoiceCreated(response.data);
-      setAmount(0);
-      setProductIds([]);
-      setCustomerId(null);
-      setCbteTipo(0);
-      setPtoVta(0);
-      setConcepto(0);
-      setDocTipo(0);
-      setDocNro("");
-      setImpNeto(0);
-      setImpIVA(0);
-      setError(null);
+      const newInvoice: Invoice = {
+        ...response.data,
+        createdAt: new Date(response.data.createdAt),
+        updatedAt: new Date(response.data.updatedAt),
+        products: response.data.products,
+      };
+
+      onInvoiceCreated(newInvoice);
+      resetForm();
     } catch (error) {
       console.error("Error creating invoice:", error);
       setError("Error creating invoice");
@@ -117,7 +115,7 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
   };
 
   const handleAddProduct = () => {
-    setProductIds([...productIds, { id: 0, quantity: 1 }]); // Aquí se inicializa el id con 0 en lugar de null
+    setProductIds([...productIds, { id: 0, quantity: 1 }]);
   };
 
   const handleProductChange = (index: number, productId: number) => {
@@ -130,6 +128,20 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
     const newProductIds = [...productIds];
     newProductIds[index].quantity = quantity;
     setProductIds(newProductIds);
+  };
+
+  const resetForm = () => {
+    setAmount(0);
+    setProductIds([]);
+    setCustomerId(null);
+    setCbteTipo(0);
+    setPtoVta(0);
+    setConcepto(0);
+    setDocTipo(0);
+    setDocNro("");
+    setImpNeto(0);
+    setImpIVA(0);
+    setError(null);
   };
 
   return (

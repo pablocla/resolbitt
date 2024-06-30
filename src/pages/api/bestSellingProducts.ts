@@ -1,4 +1,3 @@
-// pages/api/bestSellingProducts.ts
 import { NextApiRequest, NextApiResponse } from "next";
 import { PrismaClient } from "@prisma/client";
 
@@ -8,6 +7,10 @@ const getBestSellingProducts = async (
   req: NextApiRequest,
   res: NextApiResponse
 ) => {
+  if (req.method !== "GET") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
   try {
     // Fetching product sales data from the database
     const products = await prisma.product.findMany({

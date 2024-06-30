@@ -35,8 +35,12 @@ export default async function handler(
           return res.status(404).json({ error: "Invoice not found" });
         }
 
+        const customerData = invoice.customer
+          ? { name: invoice.customer.name, email: invoice.customer.email ?? "" }
+          : { name: "Desconocido", email: "" };
+
         const pdfBytes = await generateInvoicePdf({
-          customer: invoice.customer || { name: "Cliente desconocido" },
+          customer: customerData,
           products: invoice.products.map((ip) => ip.product),
           amount: invoice.amount,
           impIVA: invoice.impIVA,
@@ -102,12 +106,13 @@ export default async function handler(
                 product: {
                   connect: { id: productId },
                 },
-                quantity: 1,
+                quantity: 1, // Ajusta esto según tus necesidades
               })),
             },
           },
         });
 
+        // Enviar respuesta de éxito al POS
         return res.status(201).json(invoice);
       } catch (error) {
         console.error("Error creating invoice:", error);

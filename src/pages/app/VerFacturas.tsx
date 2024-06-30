@@ -1,11 +1,12 @@
+// src/pages/app/VerFacturas.tsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { Invoice } from "../../types"; // Importar la interfaz Invoice desde el archivo types
-import CrearFactura from "./CrearFactura"; // Asegúrate de que el componente CrearFactura esté correctamente importado
+import { Invoice } from "../../types";
+import CrearFactura from "./CrearFactura";
 
 interface VerFacturasProps {
-  onInvoiceCreated: (newInvoice: Invoice) => void;
+  onInvoiceCreated?: (newInvoice: Invoice) => void;
 }
 
 const VerFacturas: React.FC<VerFacturasProps> = ({ onInvoiceCreated }) => {
@@ -56,7 +57,7 @@ const VerFacturas: React.FC<VerFacturasProps> = ({ onInvoiceCreated }) => {
       const response = await axios.post(
         "/api/facturacion?action=generate-pdf",
         {
-          invoiceId: selectedInvoices[0], // Assuming you want to generate PDF for the first selected invoice
+          invoiceId: selectedInvoices[0],
         }
       );
       const blob = new Blob([response.data], { type: "application/pdf" });

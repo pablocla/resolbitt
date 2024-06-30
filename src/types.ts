@@ -1,28 +1,24 @@
-// src/types.ts
 export interface Product {
   id: number;
   name: string;
-}
-
-export interface InvoiceProduct {
-  product: Product;
+  // Agregar otras propiedades relevantes de Product
 }
 
 export interface Invoice {
   id: number;
   amount: number;
-  cbteTipo: number;
-  ptoVta: number;
-  concepto: number;
-  docTipo: number;
-  docNro: string;
-  impNeto: number;
-  impIVA: number;
-  impTotal: number;
-  customerId: number | null;
-  products: InvoiceProduct[];
-  createdAt: string;
-  userId: number | null;
-  afipStatusId: number | null;
+  customerId?: number | null;
+  cbteTipo?: number | null;
+  ptoVta?: number | null;
+  concepto?: number | null;
+  docTipo?: number | null;
+  docNro?: string | null;
+  impNeto?: number | null;
+  impIVA?: number | null;
+  impTotal?: number | null;
+  createdAt: Date;
   updatedAt: Date;
+  products: {
+    product: Product;
+  }[];
 }

@@ -7,20 +7,33 @@ interface Product {
   count: number;
 }
 
+interface BestSellingProductsData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string;
+    borderColor: string;
+    borderWidth: number;
+    pointBackgroundColor: string;
+  }[];
+}
+
 const BestSellingProducts: React.FC = () => {
-  const [bestSellingProducts, setBestSellingProducts] = useState<any>({
-    labels: [],
-    datasets: [
-      {
-        label: "Productos Más Vendidos",
-        data: [],
-        backgroundColor: "rgba(255, 99, 132, 0.2)",
-        borderColor: "rgba(255, 99, 132, 1)",
-        borderWidth: 2,
-        pointBackgroundColor: "rgba(255, 99, 132, 1)",
-      },
-    ],
-  });
+  const [bestSellingProducts, setBestSellingProducts] =
+    useState<BestSellingProductsData>({
+      labels: [],
+      datasets: [
+        {
+          label: "Productos Más Vendidos",
+          data: [],
+          backgroundColor: "rgba(255, 99, 132, 0.2)",
+          borderColor: "rgba(255, 99, 132, 1)",
+          borderWidth: 2,
+          pointBackgroundColor: "rgba(255, 99, 132, 1)",
+        },
+      ],
+    });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {

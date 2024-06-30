@@ -3,7 +3,20 @@ import fontkit from "@pdf-lib/fontkit";
 import fs from "fs";
 import path from "path";
 
-export async function generateInvoicePdf(invoiceDetails: any) {
+interface InvoiceDetails {
+  customer: {
+    name: string;
+    email: string;
+  };
+  product: {
+    name: string;
+  };
+  amount: number;
+  impIVA: number;
+  impTotal: number;
+}
+
+export async function generateInvoicePdf(invoiceDetails: InvoiceDetails) {
   const { customer, product, amount, impIVA, impTotal } = invoiceDetails;
 
   const pdfDoc = await PDFDocument.create();

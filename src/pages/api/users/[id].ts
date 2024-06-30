@@ -11,7 +11,7 @@ export default async function handler(
   const { id } = req.query;
 
   switch (method) {
-    case "GET":
+    case "GET": {
       // Obtener un usuario por ID
       try {
         const user = await prisma.user.findUnique({
@@ -23,8 +23,9 @@ export default async function handler(
         res.status(500).json({ error: "Internal server error" });
       }
       break;
+    }
 
-    case "PUT":
+    case "PUT": {
       // Actualizar un usuario por ID
       const { username, email, role, blocked } = req.body;
       try {
@@ -37,8 +38,9 @@ export default async function handler(
         res.status(500).json({ error: "Internal server error" });
       }
       break;
+    }
 
-    case "DELETE":
+    case "DELETE": {
       // Eliminar un usuario por ID
       try {
         await prisma.user.delete({ where: { id: Number(id) } });
@@ -47,6 +49,7 @@ export default async function handler(
         res.status(500).json({ error: "Internal server error" });
       }
       break;
+    }
 
     default:
       res.setHeader("Allow", ["GET", "PUT", "DELETE"]);

@@ -27,21 +27,21 @@ const Products = () => {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("/api/products");
-      setProducts(response.data);
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        handleAxiosError(error, "Error fetching products");
-      } else {
-        setError({ message: "An unknown error occurred" });
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/api/products");
+        setProducts(response.data);
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          handleAxiosError(error, "Error fetching products");
+        } else {
+          setError({ message: "An unknown error occurred" });
+        }
       }
-    }
-  };
+    };
+
+    fetchData();
+  }, []); // Asegúrate de que el arreglo de dependencias esté vacío
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
