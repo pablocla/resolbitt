@@ -41,10 +41,10 @@ export default async function handler(
 
         const pdfBytes = await generateInvoicePdf({
           customer: customerData,
-          products: invoice.products.map((ip) => ip.product),
+          products: invoice.products.map((ip) => ip.product), // Cambio aquí de 'product' a 'products'
           amount: invoice.amount,
-          impIVA: invoice.impIVA,
-          impTotal: invoice.impTotal,
+          impIVA: invoice.impIVA ?? 0, // Asignar valor por defecto si es null
+          impTotal: invoice.impTotal ?? 0, // Asignar valor por defecto si es null
         });
 
         res.setHeader("Content-Type", "application/pdf");

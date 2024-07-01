@@ -8,16 +8,16 @@ interface InvoiceDetails {
     name: string;
     email: string;
   };
-  product: {
+  products: {
     name: string;
-  };
+  }[];
   amount: number;
   impIVA: number;
   impTotal: number;
 }
 
 export async function generateInvoicePdf(invoiceDetails: InvoiceDetails) {
-  const { customer, product, amount, impIVA, impTotal } = invoiceDetails;
+  const { customer, products, amount, impIVA, impTotal } = invoiceDetails;
 
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
@@ -74,30 +74,37 @@ export async function generateInvoicePdf(invoiceDetails: InvoiceDetails) {
     font,
     color: rgb(0, 0, 0),
   });
-  page.drawText(`Producto: ${product.name}`, {
-    x: 50,
-    y: height - 120,
-    size: fontSize,
-    font,
-    color: rgb(0, 0, 0),
+
+  let yPosition = height - 120;
+
+  products.forEach((product, index) => {
+    page.drawText(`Producto ${index + 1}: ${product.name}`, {
+      x: 50,
+      y: yPosition,
+      size: fontSize,
+      font,
+      color: rgb(0, 0, 0),
+    });
+    yPosition -= 20;
   });
+
   page.drawText(`Monto: $${amount.toFixed(2)}`, {
     x: 50,
-    y: height - 140,
+    y: yPosition - 20,
     size: fontSize,
     font,
     color: rgb(0, 0, 0),
   });
   page.drawText(`IVA: $${impIVA.toFixed(2)}`, {
     x: 50,
-    y: height - 160,
+    y: yPosition - 40,
     size: fontSize,
     font,
     color: rgb(0, 0, 0),
   });
   page.drawText(`Total: $${impTotal.toFixed(2)}`, {
     x: 50,
-    y: height - 180,
+    y: yPosition - 60,
     size: fontSize,
     font,
     color: rgb(0, 0, 0),
