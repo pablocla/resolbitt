@@ -1,0 +1,9 @@
+-- AlterTable
+ALTER TABLE "Invoice" ADD COLUMN     "cbteTipo" INTEGER,
+ADD COLUMN     "concepto" INTEGER,
+ADD COLUMN     "docNro" TEXT,
+ADD COLUMN     "docTipo" INTEGER,
+ADD COLUMN     "impIVA" DOUBLE PRECISION,
+ADD COLUMN     "impNeto" DOUBLE PRECISION,
+ADD COLUMN     "impTotal" DOUBLE PRECISION,
+ADD COLUMN     "ptoVta" INTEGER;

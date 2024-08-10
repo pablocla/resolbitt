@@ -1,0 +1,10 @@
+/* Facturacion.module.css */
+.container {
+  padding: 20px;
+  background-color: #fff;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}

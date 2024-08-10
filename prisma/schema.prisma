@@ -1,0 +1,109 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id          Int          @id @default(autoincrement())
+  username    String       @unique
+  email       String       @unique
+  password    String
+  products    Product[]
+  invoices    Invoice[]
+  role        Role         @default(USER)
+  blocked     Boolean      @default(false) // Añadido el campo blocked
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+
+model Product {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  price       Float        @default(0.0)
+  userId      Int
+  user        User         @relation(fields: [userId], references: [id])
+  invoices    InvoiceProduct[]
+  stocks      Stock[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Invoice {
+  id              Int           @id @default(autoincrement())
+  amount          Float
+  userId          Int?
+  customerId      Int?
+  user            User?         @relation(fields: [userId], references: [id])
+  customer        Customer?     @relation(fields: [customerId], references: [id])
+  products        InvoiceProduct[]
+  afipStatus      AfipStatus?   @relation(fields: [afipStatusId], references: [id])
+  afipStatusId    Int?
+  afipResponse    AfipResponse[]
+  cbteTipo        Int?          // Tipo de comprobante (Factura A, B, etc.)
+  ptoVta          Int?          // Punto de venta
+  concepto        Int?          // Concepto (productos, servicios, etc.)
+  docTipo         Int?          // Tipo de documento del cliente (CUIT, DNI, etc.)
+  docNro          String?       // Número de documento del cliente
+  impNeto         Float?        // Importe neto gravado
+  impIVA          Float?        // Importe del IVA
+  impTotal        Float?        // Importe total
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model InvoiceProduct {
+  id        Int      @id @default(autoincrement())
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  invoiceId Int
+  productId Int
+  quantity  Int
+}
+
+model Stock {
+  id          Int          @id @default(autoincrement())
+  productId   Int
+  quantity    Int
+  product     Product      @relation(fields: [productId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Customer {
+  id          Int          @id @default(autoincrement())
+  name        String
+  email       String?
+  phone       String?
+  cuit        String
+  invoices    Invoice[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model AfipStatus {
+  id           Int       @id @default(autoincrement())
+  status       String
+  description  String
+  invoices     Invoice[]
+}
+
+model AfipResponse {
+  id          Int          @id @default(autoincrement())
+  invoiceId   Int
+  invoice     Invoice      @relation(fields: [invoiceId], references: [id])
+  status      String
+  message     String
+  response    Json
+  createdAt   DateTime     @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}
