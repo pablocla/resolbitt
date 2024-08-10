@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import "../styles/globals.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { SessionProvider } from "next-auth/react";
@@ -24,6 +25,15 @@ function MyApp({ Component, pageProps }: AppProps) {
       </div>
     </SessionProvider>
   );
+=======
+// src/pages/_app.tsx
+
+import type { AppProps } from "next/app";
+import "../styles/globals.css";
+
+function MyApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+>>>>>>> 6b7626470a55dafe12231f2164104a1a31fd70de
 }
 
 export default MyApp;

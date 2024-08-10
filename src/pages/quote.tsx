@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import styles from "../styles/Quote.module.css";
 import Head from "next/head";
 
@@ -13,6 +14,20 @@ const QuotePage = () => {
           Cotización
         </h2>
         <p className="text-lg mb-8">
+=======
+// pages/quote.tsx
+import Layout from "../components/Layout";
+import styles from "../styles/Quote.module.css";
+
+const QuotePage = () => {
+  return (
+    <Layout>
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
+        <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
+          Cotización
+        </h2>
+        <p className="text-lg text-gray-700 mb-8">
+>>>>>>> 6b7626470a55dafe12231f2164104a1a31fd70de
           Completa el formulario para cotizar tu proyecto de software
           personalizado.
         </p>
@@ -25,8 +40,13 @@ const QuotePage = () => {
             className="rounded-lg shadow-lg"
           ></iframe>
         </div>
+<<<<<<< HEAD
       </main>
     </div>
+=======
+      </div>
+    </Layout>
+>>>>>>> 6b7626470a55dafe12231f2164104a1a31fd70de
   );
 };
 

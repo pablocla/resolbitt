@@ -7,7 +7,11 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
+<<<<<<< HEAD
     "moduleResolution": "node",
+=======
+    "moduleResolution": "bundler",
+>>>>>>> 6b7626470a55dafe12231f2164104a1a31fd70de
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -19,6 +23,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
+<<<<<<< HEAD
     },
     "forceConsistentCasingInFileNames": true
   },
@@ -29,5 +34,10 @@
     ".next/types/**/*.ts",
     "types/**/*.d.ts" // Agrega esta línea para incluir la carpeta de tipos
   ],
+=======
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+>>>>>>> 6b7626470a55dafe12231f2164104a1a31fd70de
   "exclude": ["node_modules"]
 }

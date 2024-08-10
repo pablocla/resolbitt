@@ -7,6 +7,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+<<<<<<< HEAD
   background-color: var(--bg-color);
   color: var(--text-color);
 }
@@ -79,4 +80,6 @@ button.secondary {
 
 button.secondary:hover {
   background-color: #5a6268;
+=======
+>>>>>>> 6b7626470a55dafe12231f2164104a1a31fd70de
 }

@@ -1,12 +1,17 @@
 {
   "name": "resolbit-website",
   "version": "1.0.0",
+<<<<<<< HEAD
   "description": "",
   "main": "index.js",
+=======
+  "private": true,
+>>>>>>> 6b7626470a55dafe12231f2164104a1a31fd70de
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+<<<<<<< HEAD
     "lint": "next lint",
     "postinstall": "npx prisma generate && npx prisma migrate deploy"
   },
@@ -60,5 +65,21 @@
   "engines": {
     "node": ">=18.18.0 <21.0.0",
     "npm": ">=9.6.0"
+=======
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.2.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.1",
+    "@types/react": "18.3.3",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^2.2.19",
+    "typescript": "5.4.5"
+>>>>>>> 6b7626470a55dafe12231f2164104a1a31fd70de
   }
 }
