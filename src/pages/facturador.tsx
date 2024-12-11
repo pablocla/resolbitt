@@ -37,11 +37,11 @@ const FacturadorPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="max-w-7xl mx-auto py-12 px-6 sm:px-8 text-center">
-        <h1 className="text-4xl font-extrabold mb-4">Facturador</h1>
+        <h1 className="text-3xl sm:text-4xl font-extrabold mb-4">Facturador</h1>
         {user ? (
           <>
-            <p className="text-lg mb-8">Welcome, {user.name}!</p>
-            <div>
+            <p className="text-base sm:text-lg mb-8">Welcome, {user.name}!</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <Link href="/factura" passHref legacyBehavior>
                 <a className="button">Ir a Facturación</a>
               </Link>
@@ -55,10 +55,10 @@ const FacturadorPage = () => {
           </>
         ) : (
           <>
-            <p className="text-lg mb-8">
+            <p className="text-base sm:text-lg mb-8">
               Please log in or sign up to access the Facturador.
             </p>
-            <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Link href="/auth/signin" passHref legacyBehavior>
                 <a className="button">Login</a>
               </Link>

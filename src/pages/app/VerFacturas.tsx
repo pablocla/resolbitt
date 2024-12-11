@@ -33,22 +33,43 @@ const VerFacturas: React.FC<VerFacturasProps> = ({ onInvoiceCreated }) => {
 
   const handleTransmit = async () => {
     try {
-      await Promise.all(
-        selectedInvoices.map((invoiceId) =>
-          axios.post("/api/afip", { invoiceId })
-        )
+      // Procesar cada factura seleccionada
+      const results = await Promise.all(
+        selectedInvoices.map(async (invoiceId) => {
+          // Primero obtenemos el XML de la factura
+          const xmlResponse = await axios.get(`/api/afip/invoice/${invoiceId}/xml`);
+          
+          // Luego obtenemos el último número de comprobante
+          // Asumiendo que estos datos están en la factura, si no, deberías obtenerlos de otro modo
+          const invoice = data?.find(inv => inv.id === invoiceId);
+          if (!invoice) throw new Error('Factura no encontrada');
+          
+          const lastNumberResponse = await axios.get(
+            `/api/afip/lastInvoice/${invoice.ptoVta}/${invoice.cbteTipo}`
+          );
+
+          // Aquí puedes agregar más lógica según necesites
+          return {
+            invoiceId,
+            xml: xmlResponse.data,
+            lastNumber: lastNumberResponse.data
+          };
+        })
       );
-      alert("Facturas transmitidas exitosamente a la AFIP");
+
+      alert(`Facturas procesadas exitosamente:\n${results.map(r => `Factura ${r.invoiceId}`).join('\n')}`);
+      
     } catch (error) {
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          setError(error.response.data.error);
+          setError(error.response.data.message || 'Error en la respuesta del servidor');
         } else {
-          setError("Error de comunicación con el servidor");
+          setError('Error de comunicación con el servidor');
         }
       } else {
-        setError("Error al transmitir las facturas");
+        setError('Error al transmitir las facturas a AFIP');
       }
+      console.error('Error completo:', error);
     }
   };
 

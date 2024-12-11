@@ -1,143 +1,80 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { PrismaClient } from "@prisma/client";
-import { generateInvoicePdf } from "../../utils/generateInvoicePdf";
+import { NextApiRequest, NextApiResponse } from 'next';
+import { PrismaClient } from '@prisma/client';
+import { getServerSession } from 'next-auth';
+import { authOptions } from './auth/[...nextauth]';
 
 const prisma = new PrismaClient();
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "POST") {
-    if (req.query.action === "generate-pdf") {
-      const { invoiceId } = req.body;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const session = await getServerSession(req, res, authOptions);
 
-      if (!invoiceId) {
-        return res
-          .status(400)
-          .json({ error: "Missing invoiceId in request body" });
-      }
+  if (!session) {
+    return res.status(401).json({ 
+      error: 'Debe iniciar sesión para acceder a esta funcionalidad' 
+    });
+  }
 
-      try {
-        const invoice = await prisma.invoice.findUnique({
-          where: { id: invoiceId },
-          include: {
-            customer: true,
-            products: {
-              include: {
-                product: true,
-              },
-            },
-          },
-        });
+  if (req.method === 'POST') {
+    try {
+      const { customerId, products, amount, ...invoiceData } = req.body;
 
-        if (!invoice) {
-          return res.status(404).json({ error: "Invoice not found" });
-        }
-
-        const customerData = invoice.customer
-          ? { name: invoice.customer.name, email: invoice.customer.email ?? "" }
-          : { name: "Desconocido", email: "" };
-
-        const pdfBytes = await generateInvoicePdf({
-          customer: customerData,
-          products: invoice.products.map((ip) => ip.product), // Cambio aquí de 'product' a 'products'
-          amount: invoice.amount,
-          impIVA: invoice.impIVA ?? 0, // Asignar valor por defecto si es null
-          impTotal: invoice.impTotal ?? 0, // Asignar valor por defecto si es null
-        });
-
-        res.setHeader("Content-Type", "application/pdf");
-        res.setHeader(
-          "Content-Disposition",
-          `attachment; filename=invoice_${invoiceId}.pdf`
-        );
-        return res.status(200).send(pdfBytes);
-      } catch (error) {
-        console.error("Error generating invoice PDF:", error);
-        return res.status(500).json({ error: "Error generating invoice PDF" });
-      }
-    } else {
-      const {
-        amount,
-        productIds,
-        customerId,
-        cbteTipo,
-        ptoVta,
-        concepto,
-        docTipo,
-        docNro,
-        impNeto,
-        impIVA,
-      } = req.body;
-
-      if (
-        amount === undefined ||
-        productIds === undefined ||
-        customerId === undefined ||
-        cbteTipo === undefined ||
-        ptoVta === undefined ||
-        concepto === undefined ||
-        docTipo === undefined ||
-        docNro === undefined ||
-        impNeto === undefined ||
-        impIVA === undefined
-      ) {
+      // Validaciones
+      if (!customerId || !products || !Array.isArray(products) || products.length === 0) {
         return res.status(400).json({
-          error: "Todos los campos son obligatorios y no pueden ser nulos",
+          error: 'Datos inválidos',
+          details: 'Se requiere customerId y al menos un producto'
         });
       }
 
-      try {
-        const invoice = await prisma.invoice.create({
-          data: {
-            amount,
-            customerId,
-            cbteTipo,
-            ptoVta,
-            concepto,
-            docTipo,
-            docNro,
-            impNeto,
-            impIVA,
-            impTotal: amount + impIVA,
-            products: {
-              create: productIds.map((productId: number) => ({
-                product: {
-                  connect: { id: productId },
-                },
-                quantity: 1, // Ajusta esto según tus necesidades
-              })),
-            },
-          },
-        });
+      // Crear la factura con todas sus relaciones
+      const invoice = await prisma.invoice.create({
+        data: {
+          amount: parseFloat(amount) || 0,
+          customerId: parseInt(customerId),
+          userId: session.user?.id,
+          ...invoiceData,
+          products: {
+            create: products.map(p => ({
+              quantity: parseInt(p.quantity),
+              product: {
+                connect: { id: parseInt(p.productId) }
+              }
+            }))
+          }
+        },
+        include: {
+          customer: true,
+          products: {
+            include: {
+              product: true
+            }
+          }
+        }
+      });
 
-        // Enviar respuesta de éxito al POS
-        return res.status(201).json(invoice);
-      } catch (error) {
-        console.error("Error creating invoice:", error);
-        return res.status(500).json({ error: "Error creating invoice" });
-      }
+      res.status(201).json(invoice);
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Error interno del servidor' });
     }
-  } else if (req.method === "GET") {
+  } else if (req.method === 'GET') {
     try {
       const invoices = await prisma.invoice.findMany({
         include: {
+          customer: true,
           products: {
             include: {
-              product: true,
-            },
-          },
-          customer: true,
-        },
+              product: true
+            }
+          }
+        }
       });
-      return res.status(200).json(invoices);
+      res.status(200).json(invoices);
     } catch (error) {
-      console.error("Error fetching invoices:", error);
-      return res.status(500).json({ error: "Error fetching invoices" });
+      console.error('Error fetching invoices:', error);
+      res.status(500).json({ error: 'Error al obtener facturas' });
     }
   } else {
-    res.setHeader("Allow", ["POST", "GET"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    res.status(405).json({ error: 'Método no permitido' });
   }
 }

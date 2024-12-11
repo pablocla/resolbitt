@@ -100,6 +100,8 @@ model AfipResponse {
   status      String
   message     String
   response    Json
+  requestXml  String?      // Nuevo campo para guardar el XML enviado
+  responseXml String?      // Nuevo campo para guardar la respuesta XML
   createdAt   DateTime     @default(now())
 }
 

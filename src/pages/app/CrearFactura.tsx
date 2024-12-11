@@ -8,6 +8,18 @@ interface CrearFacturaProps {
   onClose: () => void;
 }
 
+interface InvoiceProduct {
+  productId: number;
+  quantity: number;
+}
+
+interface InvoiceData {
+  customerId: number;
+  amount: number;
+  products: InvoiceProduct[];
+  // ...otros campos necesarios
+}
+
 const CrearFactura: React.FC<CrearFacturaProps> = ({
   onInvoiceCreated,
   onClose,
@@ -58,59 +70,46 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
     };
   }, [onClose]);
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const calculateTotal = () => {
+    // Implementa esta función
+    return amount + impIVA;
+  };
 
-    if (
-      !amount ||
-      productIds.length === 0 ||
-      !customerId ||
-      !cbteTipo ||
-      !ptoVta ||
-      !concepto ||
-      !docTipo ||
-      !docNro ||
-      !impNeto ||
-      !impIVA
-    ) {
-      alert("Todos los valores deben ser válidos");
-      return;
-    }
-
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      const customer = customers.find((cust) => cust.id === customerId);
-      if (!customer) {
-        alert("Cliente no encontrado");
-        return;
-      }
-
-      const response = await axios.post<Invoice>("/api/facturacion", {
-        amount,
-        productIds: productIds.map((item) => item.id),
-        customerId,
-        cuit: customer.cuit,
-        cbteTipo,
-        ptoVta,
-        concepto,
-        docTipo,
-        docNro,
-        impNeto,
-        impIVA,
-        impTotal: amount + impIVA,
-      });
-
-      const newInvoice: Invoice = {
-        ...response.data,
-        createdAt: new Date(response.data.createdAt),
-        updatedAt: new Date(response.data.updatedAt),
-        products: response.data.products,
+      const total = calculateTotal(); // Implementa esta función
+      const formData: InvoiceData = {
+        customerId: customerId!,
+        amount: total,
+        products: productIds.map(p => ({
+          productId: p.id,
+          quantity: p.quantity
+        })),
+        impTotal: total,
+        impNeto: total / 1.21, // Ejemplo para IVA 21%
+        impIVA: total - (total / 1.21),
+        cbteTipo: 1, // Factura A por defecto
+        ptoVta: 1, // Punto de venta por defecto
+        concepto: 1, // Productos por defecto
+        docTipo: 80, // CUIT por defecto
+        docNro: customers.find(c => c.id === customerId)?.cuit || ''
       };
 
-      onInvoiceCreated(newInvoice);
-      resetForm();
+      console.log('Enviando datos:', formData); // Para debug
+
+      const response = await axios.post('/api/facturacion', formData);
+      if (response.status === 201) {
+        onInvoiceCreated?.(response.data);
+        onClose?.();
+      }
     } catch (error) {
-      console.error("Error creating invoice:", error);
-      setError("Error creating invoice");
+      console.error('Error creating invoice:', error);
+      if (axios.isAxiosError(error)) {
+        alert(`Error: ${error.response?.data?.details || error.message}`);
+      } else {
+        alert('Error al crear la factura');
+      }
     }
   };
 

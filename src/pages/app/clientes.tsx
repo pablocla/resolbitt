@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Sidebar from "../../components/sidebar"; // Asegúrate de importar el Sidebar correctamente
+import DashboardLayout from "../../components/DashboardLayout";
+import { useTheme } from "../hooks/useTheme";
 
 interface Cliente {
   id: number;
@@ -44,6 +45,7 @@ const Clientes = () => {
     cuit: "",
   });
   const [editId, setEditId] = useState<number | null>(null);
+  const { theme } = useTheme();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -102,9 +104,8 @@ const Clientes = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-white p-8">
+    <DashboardLayout>
+      <div className={`min-h-screen p-8 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-black'}`}>
         <h1 className="text-3xl font-bold mb-6">Gestión de Clientes</h1>
         <form
           onSubmit={handleSubmit}
@@ -201,7 +202,7 @@ const Clientes = () => {
           </table>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

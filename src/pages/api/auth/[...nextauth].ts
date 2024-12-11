@@ -1,53 +1,85 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "@/lib/db";
-import bcrypt from "bcrypt";
+import NextAuth from 'next-auth';
+import type { NextAuthOptions, User as NextAuthUser, Session as NextAuthSession, Session } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { PrismaClient } from '@prisma/client';
+import type { JWT } from 'next-auth/jwt';
+import { compare } from 'bcryptjs';
 
-export default NextAuth({
+const prisma = new PrismaClient();
+
+interface User extends NextAuthUser {
+  role: string;
+}
+
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+      role: string;
+    } & NextAuthSession['user'];
+  }
+}
+
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
         username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" },
+        password: { label: "Password", type: "password" }
       },
-      authorize: async (credentials) => {
-        if (!credentials?.password || !credentials?.username) {
-          return null;
+      async authorize(credentials) {
+        if (!credentials?.username || !credentials?.password) {
+          throw new Error('Username y contraseña son requeridos');
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.username },
+          where: { username: credentials.username }
         });
 
-        if (user && bcrypt.compareSync(credentials.password, user.password)) {
-          return {
-            id: String(user.id), // Convertir id a cadena
-            username: user.username,
-            email: user.email,
-            password: user.password,
-          };
-        } else {
-          return null;
+        if (!user) {
+          throw new Error('Usuario no encontrado');
         }
-      },
-    }),
+
+        const isValid = await compare(credentials.password, user.password);
+
+        if (!isValid) {
+          throw new Error('Contraseña incorrecta');
+        }
+
+        return {
+          id: user.id.toString(),
+          email: user.email,
+          name: user.username,
+          role: user.role
+        };
+      }
+    })
   ],
-  adapter: PrismaAdapter(prisma),
-  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+    maxAge: 24 * 60 * 60 // 24 horas
+  },
   pages: {
-    signIn: "/auth/signin",
-    signOut: "/auth/signout",
-    error: "/auth/error",
-    verifyRequest: "/auth/verify-request",
+    signIn: '/auth/signin',
+    error: '/auth/error'
   },
   callbacks: {
-    async session({ session, user }) {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = (user as User).role;
+        token.id = user.id;
+      }
+      return token;
+    },
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
-        session.user.id = user.id;
+        session.user.role = token.role;
+        session.user.id = token.id as string;
       }
       return session;
-    },
-  },
-});
+    }
+  }
+};
+
+export default NextAuth(authOptions);

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 export default function SignUp() {
@@ -25,10 +25,12 @@ export default function SignUp() {
     if (res.status === 201) {
       setSuccess("User created successfully!");
       setError("");
-      // Redirección después de la creación exitosa del usuario
-      setTimeout(() => {
-        router.push("/auth/signin");
-      }, 2000);
+      // Check if the current route is not already the /auth/signin page before navigating
+      if (router.pathname !== "/auth/signin") {
+        setTimeout(() => {
+          router.push("/auth/signin");
+        }, 2000);
+      }
     } else {
       setError(data.error || "An error occurred");
       setSuccess("");
@@ -107,3 +109,4 @@ export default function SignUp() {
     </div>
   );
 }
+

@@ -1,24 +1,33 @@
 export interface Product {
   id: number;
   name: string;
-  // Agregar otras propiedades relevantes de Product
+  price: number;
+  // ...otros campos
+}
+
+export interface InvoiceProduct {
+  productId: number;
+  quantity: number;
+}
+
+export interface InvoiceCreate {
+  customerId: number;
+  products: InvoiceProduct[];
+  amount: number;
+  cbteTipo?: number;
+  ptoVta?: number;
+  concepto?: number;
+  docTipo?: number;
+  docNro?: string;
+  impNeto?: number;
+  impIVA?: number;
+  impTotal?: number;
 }
 
 export interface Invoice {
   id: number;
+  customerId: number;
   amount: number;
-  customerId?: number | null;
-  cbteTipo?: number | null;
-  ptoVta?: number | null;
-  concepto?: number | null;
-  docTipo?: number | null;
-  docNro?: string | null;
-  impNeto?: number | null;
-  impIVA?: number | null;
-  impTotal?: number | null;
-  createdAt: Date;
-  updatedAt: Date;
-  products: {
-    product: Product;
-  }[];
+  products: InvoiceProduct[];
+  // ...otros campos
 }

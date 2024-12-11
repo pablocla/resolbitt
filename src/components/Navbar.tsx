@@ -8,128 +8,121 @@ import {
   FaSignOutAlt,
   FaPlusCircle,
   FaFileInvoice,
+  FaTachometerAlt,
+  FaUsers,
+  FaBoxes,
+  FaClipboardList,
+  FaCog,
+  FaWarehouse,
+  FaShoppingCart,
 } from "react-icons/fa";
 
-const Navbar = ({
-  onQuickAction,
-}: {
-  onQuickAction: (action: string) => void;
-}) => {
+const Navbar = ({ onQuickAction }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const isDashboardOrInternal = router.pathname.startsWith("/app");
 
   return (
-    <nav className="bg-gray-900 text-white p-4 shadow-lg">
+    <nav className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 p-4 rounded-lg shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
-        <Link href="/app/dashboard" legacyBehavior passHref>
-          <a className="flex items-center space-x-3">
+        <Link href="/app/dashboard">
+          <div className="flex items-center space-x-3 cursor-pointer">
             <Image
               src="/logo.png"
               alt="ResolbIT"
               width={50}
               height={50}
-              className="logo"
+              className="rounded-full"
             />
-            <span className="text-xl font-bold">ResolbIT</span>
-          </a>
+            <span className="text-xl font-bold text-white">ResolbIT</span>
+          </div>
         </Link>
-        <ul className="flex space-x-4 items-center">
+        <ul className="flex space-x-4">
+          <li>
+            <Link href="/app/dashboard">
+              <div className="text-white flex items-center px-3 py-2 rounded-lg hover:bg-purple-700 transition duration-300 cursor-pointer">
+                <FaTachometerAlt className="mr-2" /> Dashboard
+              </div>
+            </Link>
+          </li>
+          <li>
+            <Link href="/app/customers">
+              <div className="text-white flex items-center px-3 py-2 rounded-lg hover:bg-purple-700 transition duration-300 cursor-pointer">
+                <FaUsers className="mr-2" /> Clientes
+              </div>
+            </Link>
+          </li>
+          <li>
+            <Link href="/app/products">
+              <div className="text-white flex items-center px-3 py-2 rounded-lg hover:bg-purple-700 transition duration-300 cursor-pointer">
+                <FaBoxes className="mr-2" /> Productos
+              </div>
+            </Link>
+          </li>
+          <li>
+            <Link href="/app/sales">
+              <div className="text-white flex items-center px-3 py-2 rounded-lg hover:bg-purple-700 transition duration-300 cursor-pointer">
+                <FaClipboardList className="mr-2" /> Ventas
+              </div>
+            </Link>
+          </li>
+          <li>
+            <Link href="/app/inventory">
+              <div className="text-white flex items-center px-3 py-2 rounded-lg hover:bg-purple-700 transition duration-300 cursor-pointer">
+                <FaWarehouse className="mr-2" /> Inventario
+              </div>
+            </Link>
+          </li>
+          <li>
+            <Link href="/app/invoicing">
+              <div className="text-white flex items-center px-3 py-2 rounded-lg hover:bg-purple-700 transition duration-300 cursor-pointer">
+                <FaFileInvoice className="mr-2" /> Facturación
+              </div>
+            </Link>
+          </li>
+          <li>
+            <Link href="/app/orders">
+              <div className="text-white flex items-center px-3 py-2 rounded-lg hover:bg-purple-700 transition duration-300 cursor-pointer">
+                <FaShoppingCart className="mr-2" /> Pedidos
+              </div>
+            </Link>
+          </li>
+          <li>
+            <Link href="/app/settings">
+              <div className="text-white flex items-center px-3 py-2 rounded-lg hover:bg-purple-700 transition duration-300 cursor-pointer">
+                <FaCog className="mr-2" /> Configuraciones
+              </div>
+            </Link>
+          </li>
+          {status === "authenticated" && (
+            <li>
+              <button
+                onClick={() => signOut()}
+                className="text-white flex items-center px-3 py-2 rounded-lg bg-red-600 hover:bg-red-700 transition duration-300"
+              >
+                <FaSignOutAlt className="mr-2" /> Log Out
+              </button>
+            </li>
+          )}
           {status === "unauthenticated" && (
             <>
               <li>
-                <Link href="/auth/signin" legacyBehavior passHref>
-                  <a className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md transition duration-300">
+                <Link href="/auth/signin">
+                  <div className="text-white flex items-center px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 transition duration-300 cursor-pointer">
                     Iniciar Sesión
-                  </a>
+                  </div>
                 </Link>
               </li>
               <li>
-                <Link href="/auth/singup" legacyBehavior passHref>
-                  <a className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md transition duration-300">
+                <Link href="/auth/signup">
+                  <div className="text-white flex items-center px-3 py-2 rounded-lg bg-green-600 hover:bg-green-700 transition duration-300 cursor-pointer">
                     Registrarse
-                  </a>
+                  </div>
                 </Link>
-              </li>
-            </>
-          )}
-          {status === "authenticated" && (
-            <>
-              {isDashboardOrInternal && (
-                <>
-                  <li>
-                    <button
-                      onClick={() => onQuickAction("addClient")}
-                      className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300"
-                    >
-                      <FaUserPlus className="mr-2" /> Agregar Cliente
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => onQuickAction("searchPrice")}
-                      className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300"
-                    >
-                      <FaSearch className="mr-2" /> Buscar Precio
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => onQuickAction("createProduct")}
-                      className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300"
-                    >
-                      <FaPlusCircle className="mr-2" /> Crear Producto
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      onClick={() => onQuickAction("createInvoice")}
-                      className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300"
-                    >
-                      <FaFileInvoice className="mr-2" /> Crear Factura
-                    </button>
-                  </li>
-                </>
-              )}
-              <li>
-                <button
-                  onClick={() => signOut()}
-                  className="flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md transition duration-300"
-                >
-                  <FaSignOutAlt className="mr-2" /> Log Out
-                </button>
               </li>
             </>
           )}
         </ul>
       </div>
-      {!isDashboardOrInternal && (
-        <div className="mt-4">
-          <ul className="flex space-x-4 justify-center">
-            <li>
-              <Link href="/quote" legacyBehavior passHref>
-                <a className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300">
-                  Cotizar Software Personalizado
-                </a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/app/dashboard" legacyBehavior passHref>
-                <a className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300">
-                  Facturador
-                </a>
-              </Link>
-            </li>
-            <li>
-              <Link href="/about" legacyBehavior passHref>
-                <a className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300">
-                  Sobre nosotros
-                </a>
-              </Link>
-            </li>
-          </ul>
-        </div>
-      )}
     </nav>
   );
 };

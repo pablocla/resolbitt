@@ -22,7 +22,7 @@ import {
   FaUsers,
 } from "react-icons/fa";
 import AddClientModal from "../../components/AddClientModal";
-import Sidebar from "../../components/sidebar";
+import Sidebar from "../../components/Sidebar";
 
 ChartJS.register(
   CategoryScale,
@@ -34,11 +34,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
-interface StockItem {
-  name: string;
-  quantity: number;
-}
 
 const Dashboard = () => {
   const router = useRouter();
@@ -94,10 +89,10 @@ const Dashboard = () => {
               data: productData.map(
                 (product: { count: number }) => product.count
               ),
-              backgroundColor: "rgba(255, 205, 86, 0.2)", // Color de fondo amarillo
-              borderColor: "rgba(255, 205, 86, 1)", // Color de borde amarillo
+              backgroundColor: "rgba(255, 205, 86, 0.2)",
+              borderColor: "rgba(255, 205, 86, 1)",
               borderWidth: 2,
-              pointBackgroundColor: "rgba(255, 205, 86, 1)", // Color del punto amarillo
+              pointBackgroundColor: "rgba(255, 205, 86, 1)",
             },
           ],
         });
@@ -113,7 +108,7 @@ const Dashboard = () => {
     const interval = setInterval(() => {
       fetchSalesData();
       fetchBestSellingProducts();
-    }, 86400000); // Actualiza una vez al día (24 horas)
+    }, 86400000);
 
     return () => clearInterval(interval);
   }, []);
@@ -133,7 +128,7 @@ const Dashboard = () => {
         console.log("Crear Factura");
         break;
       case "manageUsers":
-        router.push("/users"); // Navegar a la página de usuarios
+        router.push("/users");
         break;
       default:
         break;
@@ -142,133 +137,130 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="min-h-screen flex bg-gradient-to-r from-blue-800 via-purple-800 to-gray-900 text-white">
-        <Sidebar />
-        <div className="flex-1">
-          <div className="p-4">
-            <h1 className="text-3xl font-bold mb-4">Dashboard de Ventas</h1>
-            {/* Subbarra de navegación */}
-            <div className="bg-gray-800 text-black p-4 shadow-md mb-4 flex justify-around">
-              <button
-                onClick={() => handleQuickAction("addClient")}
-                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
-                title="Agregar Cliente"
-              >
-                <FaUserPlus className="mr-2" />
-              </button>
-              <button
-                onClick={() => handleQuickAction("searchPrice")}
-                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
-                title="Buscar Precio"
-              >
-                <FaSearch className="mr-2" />
-              </button>
-              <button
-                onClick={() => handleQuickAction("createProduct")}
-                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
-                title="Crear Producto"
-              >
-                <FaPlusCircle className="mr-2" />
-              </button>
-              <button
-                onClick={() => handleQuickAction("createInvoice")}
-                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
-                title="Crear Factura"
-              >
-                <FaFileInvoice className="mr-2" />
-              </button>
-              <button
-                onClick={() => handleQuickAction("manageUsers")}
-                className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300 text-white"
-                title="Gestionar Usuarios"
-              >
-                <FaUsers className="mr-2" />
-              </button>
-            </div>
+      <div className="min-h-screen flex bg-gradient-to-r from-cyan-500 to-blue-500 text-black dark:from-gray-900 dark:to-gray-700">
+        <Sidebar onQuickAction={handleQuickAction} />
+        <div className="flex-1 p-4">
+          <h1 className="text-3xl font-bold mb-4 text-black dark:text-white">Dashboard de Ventas</h1>
+          <div className="bg-gray-800 text-white p-4 shadow-md mb-4 flex justify-around rounded-md">
+            <button
+              onClick={() => handleQuickAction("addClient")}
+              className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300"
+              title="Agregar Cliente"
+            >
+              <FaUserPlus className="mr-2" />
+            </button>
+            <button
+              onClick={() => handleQuickAction("searchPrice")}
+              className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300"
+              title="Buscar Precio"
+            >
+              <FaSearch className="mr-2" />
+            </button>
+            <button
+              onClick={() => handleQuickAction("createProduct")}
+              className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300"
+              title="Crear Producto"
+            >
+              <FaPlusCircle className="mr-2" />
+            </button>
+            <button
+              onClick={() => handleQuickAction("createInvoice")}
+              className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300"
+              title="Crear Factura"
+            >
+              <FaFileInvoice className="mr-2" />
+            </button>
+            <button
+              onClick={() => handleQuickAction("manageUsers")}
+              className="flex items-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-md transition duration-300"
+              title="Gestionar Usuarios"
+            >
+              <FaUsers className="mr-2" />
+            </button>
+          </div>
 
-            <div className="flex space-x-4 flex-col md:flex-row">
-              <div className="bg-black p-4 rounded shadow-md text-black flex-1">
-                <h2 className="text-xl mb-2">Ventas</h2>
-                <div className="h-64">
-                  <Line
-                    data={salesData}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      scales: {
-                        x: {
-                          grid: {
-                            color: "rgba(255, 255, 255, 0.1)",
-                          },
-                        },
-                        y: {
-                          grid: {
-                            color: "rgba(255, 255, 255, 0.1)",
-                          },
+          <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded shadow-md flex-1">
+              <h2 className="text-xl mb-2 text-black dark:text-white">Ventas</h2>
+              <div className="h-64">
+                <Line
+                  data={salesData}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                      x: {
+                        grid: {
+                          color: "rgba(255, 255, 255, 0.1)",
                         },
                       },
-                      plugins: {
-                        legend: {
-                          labels: {
-                            color: "white",
-                          },
-                        },
-                        tooltip: {
-                          enabled: true,
-                          backgroundColor: "rgba(0, 0, 0, 0.7)",
-                          titleColor: "white",
-                          bodyColor: "white",
+                      y: {
+                        grid: {
+                          color: "rgba(255, 255, 255, 0.1)",
                         },
                       },
-                    }}
-                  />
-                </div>
+                    },
+                    plugins: {
+                      legend: {
+                        labels: {
+                          color: "white",
+                        },
+                      },
+                      tooltip: {
+                        enabled: true,
+                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        titleColor: "white",
+                        bodyColor: "white",
+                      },
+                    },
+                  }}
+                />
               </div>
-              <div className="bg-black p-4 rounded shadow-md text-black flex-1">
-                <h2 className="text-xl mb-2">Productos Más Vendidos</h2>
-                <div className="h-64">
-                  <Radar
-                    data={bestSellingProducts}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      scales: {
-                        r: {
-                          grid: {
-                            color: "rgba(255, 255, 255, 0.1)",
-                          },
-                          pointLabels: {
-                            color: "white",
-                          },
-                          angleLines: {
-                            color: "rgba(255, 255, 255, 0.1)",
-                          },
+            </div>
+            <div className="bg-white dark:bg-gray-800 p-4 rounded shadow-md flex-1">
+              <h2 className="text-xl mb-2 text-black dark:text-white">Productos Más Vendidos</h2>
+              <div className="h-64">
+                <Radar
+                  data={bestSellingProducts}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                      r: {
+                        grid: {
+                          color: "rgba(255, 255, 255, 0.1)",
+                        },
+                        pointLabels: {
+                          color: "white",
+                        },
+                        angleLines: {
+                          color: "rgba(255, 255, 255, 0.1)",
                         },
                       },
-                      plugins: {
-                        legend: {
-                          labels: {
-                            color: "white",
-                          },
-                        },
-                        tooltip: {
-                          enabled: true,
-                          backgroundColor: "rgba(0, 0, 0, 0.7)",
-                          titleColor: "white",
-                          bodyColor: "white",
+                    },
+                    plugins: {
+                      legend: {
+                        labels: {
+                          color: "white",
                         },
                       },
-                    }}
-                  />
-                </div>
+                      tooltip: {
+                        enabled: true,
+                        backgroundColor: "rgba(0, 0, 0, 0.7)",
+                        titleColor: "white",
+                        bodyColor: "white",
+                      },
+                    },
+                  }}
+                />
               </div>
             </div>
           </div>
-          {showAddClientModal && (
-            <AddClientModal onClose={() => setShowAddClientModal(false)} />
-          )}
         </div>
       </div>
+      {showAddClientModal && (
+        <AddClientModal onClose={() => setShowAddClientModal(false)} />
+      )}
     </>
   );
 };
