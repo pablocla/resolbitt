@@ -113,7 +113,7 @@ const Navbar = ({ onQuickAction }) => {
                 </Link>
               </li>
               <li>
-                <Link href="/auth/signup">
+                <Link href="/auth/singup">
                   <div className="text-white flex items-center px-3 py-2 rounded-lg bg-green-600 hover:bg-green-700 transition duration-300 cursor-pointer">
                     Registrarse
                   </div>

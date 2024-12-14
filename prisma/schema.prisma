@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
@@ -8,25 +8,24 @@ generator client {
 }
 
 model User {
-  id          Int          @id @default(autoincrement())
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   username    String       @unique
   email       String       @unique
   password    String
   products    Product[]
   invoices    Invoice[]
   role        Role         @default(USER)
-  blocked     Boolean      @default(false) // Añadido el campo blocked
+  blocked     Boolean      @default(false)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 }
 
-
 model Product {
-  id          Int          @id @default(autoincrement())
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   description String?
   price       Float        @default(0.0)
-  userId      Int
+  userId      String       @db.ObjectId
   user        User         @relation(fields: [userId], references: [id])
   invoices    InvoiceProduct[]
   stocks      Stock[]
@@ -35,15 +34,15 @@ model Product {
 }
 
 model Invoice {
-  id              Int           @id @default(autoincrement())
+  id              String         @id @default(auto()) @map("_id") @db.ObjectId
   amount          Float
-  userId          Int?
-  customerId      Int?
-  user            User?         @relation(fields: [userId], references: [id])
-  customer        Customer?     @relation(fields: [customerId], references: [id])
+  userId          String?        @db.ObjectId
+  customerId      String?        @db.ObjectId
+  user            User?          @relation(fields: [userId], references: [id])
+  customer        Customer?      @relation(fields: [customerId], references: [id])
   products        InvoiceProduct[]
-  afipStatus      AfipStatus?   @relation(fields: [afipStatusId], references: [id])
-  afipStatusId    Int?
+  afipStatus      AfipStatus?    @relation(fields: [afipStatusId], references: [id])
+  afipStatusId    String?        @db.ObjectId
   afipResponse    AfipResponse[]
   cbteTipo        Int?          // Tipo de comprobante (Factura A, B, etc.)
   ptoVta          Int?          // Punto de venta
@@ -53,56 +52,56 @@ model Invoice {
   impNeto         Float?        // Importe neto gravado
   impIVA          Float?        // Importe del IVA
   impTotal        Float?        // Importe total
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 }
 
 model InvoiceProduct {
-  id        Int      @id @default(autoincrement())
-  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
-  product   Product  @relation(fields: [productId], references: [id])
-  invoiceId Int
-  productId Int
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  invoice   Invoice   @relation(fields: [invoiceId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+  invoiceId String    @db.ObjectId
+  productId String    @db.ObjectId
   quantity  Int
 }
 
 model Stock {
-  id          Int          @id @default(autoincrement())
-  productId   Int
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  productId   String    @db.ObjectId
   quantity    Int
-  product     Product      @relation(fields: [productId], references: [id])
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  product     Product   @relation(fields: [productId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Customer {
-  id          Int          @id @default(autoincrement())
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   email       String?
   phone       String?
   cuit        String
   invoices    Invoice[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model AfipStatus {
-  id           Int       @id @default(autoincrement())
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
   status       String
   description  String
   invoices     Invoice[]
 }
 
 model AfipResponse {
-  id          Int          @id @default(autoincrement())
-  invoiceId   Int
-  invoice     Invoice      @relation(fields: [invoiceId], references: [id])
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  invoiceId   String    @db.ObjectId
+  invoice     Invoice   @relation(fields: [invoiceId], references: [id])
   status      String
   message     String
   response    Json
-  requestXml  String?      // Nuevo campo para guardar el XML enviado
-  responseXml String?      // Nuevo campo para guardar la respuesta XML
-  createdAt   DateTime     @default(now())
+  requestXml  String?
+  responseXml String?
+  createdAt   DateTime  @default(now())
 }
 
 enum Role {
