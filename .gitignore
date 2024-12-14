@@ -34,3 +34,33 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# swc binaries
+*.node
+**/*.node
+.swc/
+
+# environment
+.env
+.env.development
+.env.production
+.env.test
+
+# IDE
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Logs adicionales
+logs
+*.log
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Carpetas de caché
+.cache/
+.temp/
