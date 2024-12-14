@@ -41,7 +41,7 @@ next-env.d.ts
 .swc/
 
 # environment
-.env
+
 .env.development
 .env.production
 .env.test
