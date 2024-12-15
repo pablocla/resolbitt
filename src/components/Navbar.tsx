@@ -17,7 +17,11 @@ import {
   FaShoppingCart,
 } from "react-icons/fa";
 
-const Navbar = ({ onQuickAction }) => {
+interface NavbarProps {
+  onQuickAction?: (action: string) => void;
+}
+
+const Navbar = ({ onQuickAction }: NavbarProps) => {
   const { data: session, status } = useSession();
   const router = useRouter();
 

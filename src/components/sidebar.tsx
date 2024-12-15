@@ -17,7 +17,7 @@ interface SidebarProps {
   onQuickAction?: (action: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onQuickAction }) => {
+const Sidebar = ({ onQuickAction }: SidebarProps) => {
   const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(true);
   const { theme, toggleTheme } = useTheme();

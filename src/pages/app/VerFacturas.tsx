@@ -12,7 +12,7 @@ interface VerFacturasProps {
 const VerFacturas: React.FC<VerFacturasProps> = ({ onInvoiceCreated }) => {
   const [data, setData] = useState<Invoice[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedInvoices, setSelectedInvoices] = useState<number[]>([]);
+  const [selectedInvoices, setSelectedInvoices] = useState<string[]>([]);  // Cambiado a string[]
   const [showForm, setShowForm] = useState(false);
   const [showActions, setShowActions] = useState<boolean>(false);
   const router = useRouter();
@@ -33,14 +33,9 @@ const VerFacturas: React.FC<VerFacturasProps> = ({ onInvoiceCreated }) => {
 
   const handleTransmit = async () => {
     try {
-      // Procesar cada factura seleccionada
       const results = await Promise.all(
         selectedInvoices.map(async (invoiceId) => {
-          // Primero obtenemos el XML de la factura
           const xmlResponse = await axios.get(`/api/afip/invoice/${invoiceId}/xml`);
-          
-          // Luego obtenemos el último número de comprobante
-          // Asumiendo que estos datos están en la factura, si no, deberías obtenerlos de otro modo
           const invoice = data?.find(inv => inv.id === invoiceId);
           if (!invoice) throw new Error('Factura no encontrada');
           
@@ -48,7 +43,6 @@ const VerFacturas: React.FC<VerFacturasProps> = ({ onInvoiceCreated }) => {
             `/api/afip/lastInvoice/${invoice.ptoVta}/${invoice.cbteTipo}`
           );
 
-          // Aquí puedes agregar más lógica según necesites
           return {
             invoiceId,
             xml: xmlResponse.data,
@@ -74,12 +68,12 @@ const VerFacturas: React.FC<VerFacturasProps> = ({ onInvoiceCreated }) => {
   };
 
   const handleGeneratePdf = async () => {
+    if (!selectedInvoices.length) return;
     try {
       const response = await axios.post(
-        "/api/facturacion?action=generate-pdf",
-        {
-          invoiceId: selectedInvoices[0],
-        }
+        "/api/facturacion/pdf",
+        { invoiceId: selectedInvoices[0] },
+        { responseType: 'blob' }
       );
       const blob = new Blob([response.data], { type: "application/pdf" });
       const url = window.URL.createObjectURL(blob);
@@ -95,23 +89,21 @@ const VerFacturas: React.FC<VerFacturasProps> = ({ onInvoiceCreated }) => {
     }
   };
 
-  const handleSelectInvoice = (id: number) => {
-    setSelectedInvoices((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((invoiceId) => invoiceId !== id)
-        : [...prevSelected, id]
+  const handleSelectInvoice = (id: string) => {  // Cambiado a string
+    setSelectedInvoices(prev => 
+      prev.includes(id) ? prev.filter(invId => invId !== id) : [...prev, id]
     );
   };
 
-  const handleView = (id: number) => {
+  const handleView = (id: string) => {  // Cambiado a string
     router.push(`/app/facturacion/${id}`);
   };
 
-  const handleEdit = (id: number) => {
+  const handleEdit = (id: string) => {  // Cambiado a string
     // Implementar lógica para editar factura
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {  // Cambiado a string
     try {
       await axios.delete(`/api/facturacion/${id}`);
       setData(

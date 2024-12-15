@@ -4,20 +4,27 @@ import { Product, Customer } from "@prisma/client";
 import { Invoice } from "../../types";
 
 interface CrearFacturaProps {
-  onInvoiceCreated: (invoice: Invoice) => void;
+  onInvoiceCreated: (invoice: any) => void;
   onClose: () => void;
 }
 
 interface InvoiceProduct {
-  productId: number;
+  productId: string;  // Cambiado a string para MongoDB
   quantity: number;
 }
 
 interface InvoiceData {
-  customerId: number;
+  customerId: string;  // Cambiado a string para MongoDB
   amount: number;
   products: InvoiceProduct[];
-  // ...otros campos necesarios
+  impTotal: number;
+  impNeto: number;
+  impIVA: number;
+  cbteTipo: number;
+  ptoVta: number;
+  concepto: number;
+  docTipo: number;
+  docNro: string;
 }
 
 const CrearFactura: React.FC<CrearFacturaProps> = ({
@@ -26,9 +33,9 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
 }) => {
   const [amount, setAmount] = useState<number>(0);
   const [productIds, setProductIds] = useState<
-    { id: number; quantity: number }[]
-  >([]);
-  const [customerId, setCustomerId] = useState<number | null>(null);
+    { id: string; quantity: number }[]
+  >([]);  // Cambiado a string
+  const [customerId, setCustomerId] = useState<string | null>(null);  // Cambiado a string
   const [products, setProducts] = useState<Product[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [cbteTipo, setCbteTipo] = useState<number>(0);
@@ -89,10 +96,10 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
         impTotal: total,
         impNeto: total / 1.21, // Ejemplo para IVA 21%
         impIVA: total - (total / 1.21),
-        cbteTipo: 1, // Factura A por defecto
-        ptoVta: 1, // Punto de venta por defecto
-        concepto: 1, // Productos por defecto
-        docTipo: 80, // CUIT por defecto
+        cbteTipo,
+        ptoVta,
+        concepto,
+        docTipo,
         docNro: customers.find(c => c.id === customerId)?.cuit || ''
       };
 
@@ -106,18 +113,16 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
     } catch (error) {
       console.error('Error creating invoice:', error);
       if (axios.isAxiosError(error)) {
-        alert(`Error: ${error.response?.data?.details || error.message}`);
-      } else {
-        alert('Error al crear la factura');
+        setError(error.response?.data?.error || 'Error al crear la factura');
       }
     }
   };
 
   const handleAddProduct = () => {
-    setProductIds([...productIds, { id: 0, quantity: 1 }]);
+    setProductIds([...productIds, { id: "", quantity: 1 }]);
   };
 
-  const handleProductChange = (index: number, productId: number) => {
+  const handleProductChange = (index: number, productId: string) => {
     const newProductIds = [...productIds];
     newProductIds[index].id = productId;
     setProductIds(newProductIds);
@@ -161,7 +166,7 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
           <label className="block text-gray-700 mb-2">Cliente</label>
           <select
             value={customerId || ""}
-            onChange={(e) => setCustomerId(Number(e.target.value))}
+            onChange={(e) => setCustomerId(e.target.value)}  // Removido Number()
             className="w-full p-2 border rounded"
           >
             <option value="" disabled>
@@ -180,7 +185,7 @@ const CrearFactura: React.FC<CrearFacturaProps> = ({
               <select
                 value={item.id || ""}
                 onChange={(e) =>
-                  handleProductChange(index, Number(e.target.value))
+                  handleProductChange(index, e.target.value)  // Removido Number()
                 }
                 className="w-full p-2 border rounded"
               >

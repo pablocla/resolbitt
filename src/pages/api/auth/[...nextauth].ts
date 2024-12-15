@@ -1,5 +1,5 @@
 import NextAuth from 'next-auth';
-import type { NextAuthOptions, User as NextAuthUser, Session as NextAuthSession, Session } from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaClient } from '@prisma/client';
 import type { JWT } from 'next-auth/jwt';
@@ -7,17 +7,31 @@ import { compare } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
-interface User extends NextAuthUser {
+// Definir interfaz extendida para User
+interface CustomUser {
+  id: string;
+  email: string | null;
+  name: string | null;
   role: string;
+  username?: string;
 }
 
+// Extender tipos de next-auth
 declare module 'next-auth' {
+  interface User extends CustomUser {}
+  
   interface Session {
     user: {
       id: string;
+      email: string | null;
+      name: string | null;
       role: string;
-    } & NextAuthSession['user'];
+    }
   }
+}
+
+declare module 'next-auth/jwt' {
+  interface JWT extends Pick<CustomUser, 'id' | 'role'> {}
 }
 
 export const authOptions: NextAuthOptions = {
@@ -67,17 +81,23 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = (user as User).role;
-        token.id = user.id;
+        return {
+          ...token,
+          id: user.id,
+          role: user.role
+        };
       }
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (session.user) {
-        session.user.role = token.role;
-        session.user.id = token.id as string;
-      }
-      return session;
+    async session({ session, token }) {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          role: token.role
+        }
+      };
     }
   }
 };

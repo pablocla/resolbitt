@@ -1,10 +1,11 @@
 datasource db {
   provider = "mongodb"
-  url      = env("DATABASE_URL")
+  url      = "mongodb+srv://pabloclavero77:fLUr3tZ9otB4vtdD@cluster0.lw40c.mongodb.net/cluster0?authSource=admin&retryWrites=true&w=majority"
 }
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["mongoDb"]
 }
 
 model User {

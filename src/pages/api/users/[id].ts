@@ -15,7 +15,7 @@ export default async function handler(
       // Obtener un usuario por ID
       try {
         const user = await prisma.user.findUnique({
-          where: { id: Number(id) },
+          where: { id: String(id) },
         });
         if (!user) return res.status(404).json({ error: "User not found" });
         res.status(200).json(user);
@@ -30,7 +30,7 @@ export default async function handler(
       const { username, email, role, blocked } = req.body;
       try {
         const updatedUser = await prisma.user.update({
-          where: { id: Number(id) },
+          where: { id: String(id) },
           data: { username, email, role, blocked },
         });
         res.status(200).json(updatedUser);
@@ -43,7 +43,7 @@ export default async function handler(
     case "DELETE": {
       // Eliminar un usuario por ID
       try {
-        await prisma.user.delete({ where: { id: Number(id) } });
+        await prisma.user.delete({ where: { id: String(id) } });
         res.status(200).json({ message: "User deleted successfully" });
       } catch (error) {
         res.status(500).json({ error: "Internal server error" });

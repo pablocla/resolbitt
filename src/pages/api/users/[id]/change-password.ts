@@ -26,7 +26,7 @@ export default async function handler(
   try {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     const updatedUser = await prisma.user.update({
-      where: { id: Number(id) },
+      where: { id: id as string },
       data: { password: hashedPassword },
     });
     res.status(200).json({ message: "Password updated successfully" });

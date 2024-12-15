@@ -12,7 +12,7 @@ export default async function handler(
   if (req.method === "GET") {
     try {
       const invoice = await prisma.invoice.findUnique({
-        where: { id: Number(id) },
+        where: { id: String(id) },  // Cambiado de Number a String
         include: {
           customer: true,
           products: {
